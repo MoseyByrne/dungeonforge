@@ -35,15 +35,19 @@
 > learn this from theory.
 
 | Story | Estimated points | Actual hours | Was the estimate high, low, or about right? |
-|---|---|---|---|
-| S0.1 | 3 | | |
-| S0.2 | 2 | | |
-| S0.3 | 2 | | |
+|---|---|--------------|---------------------------------------------|
+| S0.1 | 3 | 2            | low                                         |
+| S0.2 | 2 | 2            | correct                                     |
+| S0.3 | 2 | 2            | correct                                     |
 
-**Points completed (my first velocity number):** ____
+**Points completed (my first velocity number):** 6
 
 ## Sprint Review — one sentence
-
+All the acceptance criteria in the links now work:
+https://github.com/MoseyByrne/dungeonforge/issues/16
+https://github.com/MoseyByrne/dungeonforge/issues/17
+https://github.com/MoseyByrne/dungeonforge/issues/18
 > What can the project do now that it could not do at the start of the week?
+
 
 

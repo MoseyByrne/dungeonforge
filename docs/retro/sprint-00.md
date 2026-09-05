@@ -7,11 +7,12 @@
 
 ## 1. What went well?
 
-- 
+- I didn't run into/create any time-consuming errors while following along with the videos.
 
 ## 2. What slowed me down?
 
-- 
+- Working with only my laptop. Without another screen, I needed to pause and rewatch segments more often.
+- Doing laundry while working on the lab was distracting. 
 
 ## 3. ONE thing I will do differently next sprint
 
@@ -19,7 +20,7 @@
 > "Be more organised" is not actionable.
 > "Run `mvn test` before every commit, not just before pushing" is.
 
-- 
+- Work from home with my monitor connected.
 
 ---
 
