@@ -27,13 +27,19 @@ what it claims to be.
 
 ### Flaw 1 — in `docs/backlog.md`
 
-**Which item:**
+**Which item:** US 1.4
 
 **What's wrong with it:**
-
 **Which INVEST letter(s) it violates, and how:**
+I - yes.
+N - no, because it's telling the dev how to do it.
+V - subjectable.
+E - yes.
+S - yes.
+T - "professional" is subjectable.
 
 **My repaired version:**
+the story should be removed.
 
 ```
 As a ...,
@@ -49,21 +55,21 @@ Acceptance Criteria
 
 ### Flaw 2 — in `docs/definition-of-done.md`
 
-**Which checkbox:**
+**Which checkbox:** "The code is well written and easy for others to understand"
 
-**Why it can't actually be checked:**
+**Why it can't actually be checked:** A machine couldn't check it off. It's an opinion. 
 
-**My replacement, phrased so that it can be:**
+**My replacement, phrased so that it can be:** “The code passes the required style checker with zero errors or warnings, and every class and method has a descriptive name.”
 
 ---
 
 ### Flaw 3 — in `docs/sprint-01-plan.md`
 
-**Which item:**
+**Which item:** I might get busy this week.
 
-**Why it isn't really what the document calls it:**
+**Why it isn't really what the document calls it:** It is too vague and doesnt explain what could cause the problem or how it would affect the project.
 
-**My repaired version, including a mitigation someone could actually act on:**
+**My repaired version, including a mitigation someone could actually act on:** If school or work responsibilities reduce the time available for this project, I may miss the deadline. To reduce this risk, I will schedule two project work sessions now and begin the assignment early.
 
 ---
 
@@ -76,23 +82,23 @@ sentences.
 > nothing. "Its third criterion names an observable output — the same object reference — so
 > two people would always agree whether it passed" earns full marks.
 
-### Strong story 1: ______
+### Strong story 1: Minimal program that compiles and passes tests
 
-**INVEST letters it satisfies especially well:**
+**INVEST letters it satisfies especially well:** Small, Valuable, and Testable.
 
-**What specifically makes its acceptance criteria checkable:**
+**What specifically makes its acceptance criteria checkable:** The program can be compiled, and the automated test suite can be run to confirm that every test passes.
 
-### Strong story 2: ______
+### Strong story 2: Tunable numbers stored in one configuration file
 
-**INVEST letters it satisfies especially well:**
+**INVEST letters it satisfies especially well:** Valuable, Estimable, and Testable.
 
-**What specifically makes its acceptance criteria checkable:**
+**What specifically makes its acceptance criteria checkable:** A reviewer can confirm that all tunable numbers are in the configuration file and that changing them changes the game without recompiling it.
 
-### Strong story 3: ______
+### Strong story 3: One seeded source of randomness
 
-**INVEST letters it satisfies especially well:**
+**INVEST letters it satisfies especially well:** Small, Valuable, and Testable.
 
-**What specifically makes its acceptance criteria checkable:**
+**What specifically makes its acceptance criteria checkable:** The program can be run more than once with the same seed to confirm that it produces the same results each time.
 
 ---
 
@@ -103,11 +109,11 @@ what you'd expect to see in the pull-request diff when this story is done, and w
 acceptance criterion each piece satisfies.
 
 | What I'd expect in the diff | Which acceptance criterion it satisfies |
-|---|---|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+|-----------------------------|-----------------------------------------|
+| config.json                 | AC1                                     |
+| Config class                | AC3                                     |
+| GameWorld                   | AC2                                     |
+| Main class                  | AC1                                     |
 
 **One sentence: how did the acceptance criteria help you predict the shape of the work?**
 
@@ -131,3 +137,4 @@ up the way it did.
 What is one thing about the Scrum process you still don't understand after this week? A good
 question here is worth more to me than a confident wrong answer.
 
+Do you know of a good scrum checklist for someone doing scrum on their own? 
