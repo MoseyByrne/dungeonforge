@@ -57,7 +57,7 @@ finished.*
 
 **Sub-tasks**
 - [ ] Add `pom.xml` with JUnit 5 and JDK 21
-- [ ] Add `Main.java` with a banner and a version constant
+- [ ] Add `dungeonforge.Main.java` with a banner and a version constant
 - [ ] Add `SkeletonTest.java`
 - [ ] Confirm `mvn test` is green locally
 
