@@ -156,13 +156,30 @@ diff after1.txt after2.txt && echo "IDENTICAL"
 
 **Result:**
 
-```
-
+```bash
+diff after1.txt after2.txt && echo "IDENTICAL"
+IDENTICAL
 ```
 
 **Now a different seed (AC4). Paste enough to show the world changed:**
 
-```
+```bash
+
+10,13c10,13
+< L1R0: Bone Priest (17/17 HP, ATK 6)
+< L1R1: Wight (16/16 HP, ATK 5)  Crypt Rat (15/15 HP, ATK 5)
+< L1R2: (empty)
+< L1R3: Crypt Rat (14/14 HP, ATK 6)  Skeleton (17/17 HP, ATK 4)
+---
+> L1R0: Wight (16/16 HP, ATK 5)
+> L1R1: Skeleton (14/14 HP, ATK 4)  Bone Priest (15/15 HP, ATK 5)
+> L1R2: Crypt Rat (16/16 HP, ATK 5)  Crypt Rat (14/14 HP, ATK 4)
+> L1R3: (empty)
+15,17c15,17
+< L1R5: Crypt Rat (16/16 HP, ATK 4)  Wight (15/15 HP, ATK 4)
+< L1R6: Wight (16/16 HP, ATK 6)  Bone Priest (16/16 HP, ATK 5)
+< L1R7: (empty)
+---
 
 ```
 
