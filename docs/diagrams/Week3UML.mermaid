@@ -1,0 +1,158 @@
+classDiagram
+    direction TB
+
+    namespace dungeonforge {
+        class Main {
+            <<final>>
+            +String VERSION$
+            -Main()
+            +banner() String$
+            +main(String[] args) void$
+        }
+    }
+
+    namespace dungeonforge_config {
+        class GameConfig {
+            <<final>>
+            -GameConfig instance$
+            -Map~String,Object~ settings
+            -GameConfig()
+            +getInstance() GameConfig$
+            -loadDefaults() void
+            -loadFromClasspath(String resourceName) void
+            +getInt(String key) int
+            +getDouble(String key) double
+            +getSeed() long
+            +resetForTests() void$
+        }
+
+        class Json {
+            <<final>>
+            -String s
+            -int i
+            -Json(String s)
+            +parseObject(String text) Map~String,Object~$
+            -ws() void
+            -value() Object
+            -object() Map~String,Object~
+            -array() List~Object~
+            -string() String
+            -number() Double
+        }
+
+        class RandomSource {
+            <<final>>
+            -RandomSource instance$
+            -Random rng
+            -long seed
+            -RandomSource()
+            +getInstance() RandomSource$
+            +nextInt(int bound) int
+            +between(int lo, int hi) int
+            +nextDouble() double
+            +pici(List~T~ options) T
+            +pick(T[] options) T
+            +getSeed() long
+            +reseed(long newSeed) void
+            +resetForTests() void$
+        }
+    }
+
+    namespace dungeonforge_core {
+        class Entity {
+            <<abstract>>
+            #String name
+            #int hp
+            #int maxHp
+            #int attackPower
+            #int defense
+            #Entity(String name, int maxHp, int attackPower, int defense)
+            +getName() String
+            +getHp() int
+            +getMaxHp() int
+            +getAttackPower() int
+            +getDefense() int
+            +isAlive() boolean
+            +takeDamage(int amount) void
+            +heal(int amount) void
+            +describe() String
+            +toString() String
+        }
+
+        class Player {
+            -int gold
+            -int xp
+            +Player(String name)
+            +getGold() int
+            +getXp() int
+            +addGold(int g) void
+            +addXp(int x) void
+            +carryCapacity() double
+            +describe() String
+        }
+
+        class Monster {
+            -String species
+            -int xpReward
+            +Monster(String species, int baseHp, int baseAttack, int xpReward)
+            +getSpecies() String
+            +getXpReward() int
+            +describe() String
+        }
+
+        class GameWorld {
+            -Player player
+            -List~DungeonLevel~ levels
+            +GameWorld(Player player)
+            -generate() void
+            -spawn(int depth) Monster
+            +getPlayer() Player
+            +getLevels() List~DungeonLevel~
+            +totalMonsters() int
+        }
+
+        class DungeonLevel {
+            -int depth
+            -List~Room~ rooms
+            +DungeonLevel(int depth)
+            +getDepth() int
+            +getRooms() List~Room~
+            +addRoom(Room r) void
+        }
+
+        class Room {
+            -String[] FLAVORS$
+            -String id
+            -String flavor
+            -List~Monster~ monsters
+            +Room(String id)
+            +getId() String
+            +getFlavor() String
+            +getMonsters() List~Monster~
+            +addMonster(Monster m) void
+        }
+    }
+
+    Entity <|-- Player
+    Entity <|-- Monster
+
+    GameWorld "1" --> "1" Player : player
+    GameWorld "1" *-- "0..*" DungeonLevel : levels
+    DungeonLevel "1" *-- "0..*" Room : rooms
+    Room "1" *-- "0..*" Monster : monsters
+
+    GameConfig ..> Json : calls parseObject
+    RandomSource ..> GameConfig : reads seed
+    Player ..> GameConfig : reads settings
+    GameWorld ..> GameConfig : reads settings
+    GameWorld ..> RandomSource : uses
+    GameWorld ..> Room : creates
+    GameWorld ..> Monster : creates
+    Monster ..> RandomSource : uses
+    Room ..> RandomSource : uses
+
+    Main ..> Player : creates
+    Main ..> GameWorld : creates
+    Main ..> DungeonLevel : uses
+    Main ..> Room : uses
+    Main ..> Monster : uses
