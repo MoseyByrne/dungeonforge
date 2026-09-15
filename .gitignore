@@ -1,8 +1,19 @@
-# Compiled class file
+target/
+out/
+build/
+!.venv/
 *.class
-
-# Log file
-*.log
+!.mvn/wrapper/maven-wrapper.jar
+saves/
+.idea/
+*.iml
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.DS_Store
+Thumbs.db
 
 # BlueJ files
 *.ctxt
