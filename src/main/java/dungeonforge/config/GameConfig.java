@@ -33,17 +33,28 @@ public final class GameConfig {
         settings.put("seed", 20260828.0);
     }
 
-    private void  loadFromClasspath(String resourceName) {
-        try (InputStream in = GameConfig.class.getResourceAsStream("/data/" + resourceName)) {
-            if(in == null) return;
-            String text = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+    private void loadFromClasspath(String resourceName) {
+        String text = readResource(resourceName);
+        if (text == null) return;
+        try  {
             settings.putAll(Json.parseObject(text));
-        } catch (IOException | RuntimeException e) {
-            System.err.println("[config] could not read " + resourceName + ": using defaults.");
+        } catch (RuntimeException e) {
+            System.err.println("[config] could not read " + resourceName + ". using defaults");
         }
     }
 
-    public int getInt(String key) {
+    public static String readResource(String resourceName){
+        try (InputStream in = GameConfig.class.getResourceAsStream("/data/" + resourceName)) {
+            if (in == null) return null;                  // no file: fall back to defaults
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+
+        } catch (IOException | RuntimeException e) {
+            System.err.println("[config] could not read " + resourceName + ". using defaults");
+            return null;
+        }
+    }
+
+    public int getInt(String key){
         Object value = settings.get(key);
         return value instanceof Number ? ((Number)value).intValue() : 0;
     }

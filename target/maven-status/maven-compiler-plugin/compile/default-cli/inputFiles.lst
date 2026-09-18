@@ -7,4 +7,12 @@ C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\s
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\core\Monster.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\core\Player.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\core\Room.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\factory\MonsterDef.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\factory\MonsterFactory.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Armor.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Chest.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Item.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Potion.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Treasure.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Weapon.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\Main.java
