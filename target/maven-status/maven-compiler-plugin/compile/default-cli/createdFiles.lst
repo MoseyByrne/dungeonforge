@@ -1,5 +1,6 @@
 dungeonforge\core\Entity.class
 dungeonforge\items\Chest.class
+dungeonforge\factory\MonsterFactory.class
 dungeonforge\items\Item.class
 dungeonforge\core\GameWorld.class
 dungeonforge\config\RandomSource.class
@@ -10,6 +11,7 @@ dungeonforge\core\Player.class
 dungeonforge\items\Armor.class
 dungeonforge\Main.class
 dungeonforge\config\Json.class
+dungeonforge\factory\MonsterDef.class
 dungeonforge\items\Treasure.class
 dungeonforge\config\GameConfig.class
 dungeonforge\core\Monster.class
