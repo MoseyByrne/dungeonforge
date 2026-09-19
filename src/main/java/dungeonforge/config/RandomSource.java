@@ -27,7 +27,7 @@ public final class RandomSource {
 
     public double nextDouble() { return rng.nextDouble(); }
 
-    public <T> T pici(List<T> options) {
+    public <T> T pick(List<T> options) {
         return options.isEmpty() ? null : options.get(rng.nextInt(options.size()));
     }
 
