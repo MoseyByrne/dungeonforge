@@ -20,5 +20,5 @@
 
   "direwolf":   { "name": "Direwolf",    "hp": 12, "attack": 7, "xp": 14, "theme": "winterfell" },
   "white_walkers":   { "name": "White Walker",    "hp": 12, "attack": 7, "xp": 14, "theme": "winterfell" },
-  "night_king":  { "name": "Night King",   "hp": 50, "attack": 11, "xp": 52, "theme": "winterfell", "boss": true }
+  "night_king":  { "name": "Night King Tyrant",   "hp": 50, "attack": 11, "xp": 52, "theme": "winterfell", "boss": true }
 }
