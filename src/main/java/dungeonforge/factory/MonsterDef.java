@@ -17,11 +17,15 @@ public class MonsterDef {
     /** Bosses are excluded from ordinary spawns -- a ThemeKit asks for one by name. */
     public final boolean boss;
 
+    public String getStrategy() { return strategy; }
+
+    public final String strategy;
+
     public MonsterDef(String id, String name, int hp, int attack, int xp, String theme) {
-        this(id, name, hp, attack, xp, theme, false);
+        this(id, name, hp, attack, xp, theme, false, "aggressive");
     }
 
-    public MonsterDef(String id, String name, int hp, int attack, int xp, String theme, boolean boss) {
+    public MonsterDef(String id, String name, int hp, int attack, int xp, String theme, boolean boss, String strategy) {
         this.id = id;
         this.name = name;
         this.hp = hp;
@@ -29,6 +33,7 @@ public class MonsterDef {
         this.xp = xp;
         this.theme = theme;
         this.boss = boss;
+        this.strategy = strategy;
     }
 
     public String getId() {
