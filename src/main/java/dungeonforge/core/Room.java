@@ -9,7 +9,6 @@ import dungeonforge.items.Item;
  * WEEK 1 -- one room of the dungeon.
  * WEEK 3 (US-1.2) -- flavour text is picked from the one seeded source.
  */
-
 public class Room {
 
     private final String id;
