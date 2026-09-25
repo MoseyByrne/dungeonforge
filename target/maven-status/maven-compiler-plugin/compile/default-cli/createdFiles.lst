@@ -1,6 +1,7 @@
 dungeonforge\factory\ForgeThemeKit.class
 dungeonforge\factory\ThemeRegistry.class
 dungeonforge\items\Chest.class
+dungeonforge\core\Combat.class
 dungeonforge\items\Item.class
 dungeonforge\core\GameWorld.class
 dungeonforge\config\RandomSource.class
