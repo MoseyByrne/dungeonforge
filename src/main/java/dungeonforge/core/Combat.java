@@ -1,5 +1,6 @@
 package dungeonforge.core;
 
+import dungeonforge.behavior.SkittishStrategy;
 import dungeonforge.behavior.Action;
 import dungeonforge.config.GameConfig;
 
@@ -29,32 +30,58 @@ public class Combat {
 
     /** Returns true if the player survived the encounter. */
     public boolean fight(Player player, Room room, int depth) {
-        if (room.getMonsters().isEmpty()) return true;
+        if (!hasLiving(room)) return true;
 
         System.out.println("    ! " + room.getMonsters().size() + " hostile(s)");
 
         int round = 0;
         while (player.isAlive() && hasLiving(room) && round++ < MAX_ROUNDS) {
 
-            // --- player's turn: hit the first thing still standing ---
-            Monster target = firstLiving(room);
-            if (target != null) {
-                int damage = player.getAttackPower();
-                target.takeDamage(damage);
-                System.out.println("      you hit " + target.getName() + " for " + damage);
-                if (!target.isAlive()) {
-                    System.out.println("      " + target.getName() + " dies");
-                    player.addXp(target.getXpReward());
-                    player.addGold(target.getXpReward() * 2);
-                }
-            }
+            playerActs(player, room);
+
+            if (!hasLiving(room)) break;
 
             // --- monsters' turn ---
             for (Monster m : livingMonsters(room)) {
+                checkForTacticsChange(m);
                 monsterActs(m, player, room);
+                if(!player.isAlive()) break;
             }
         }
-        return player.isAlive();
+
+        if (!player.isAlive()) {
+            System.out.println("Game Over -- Player Died");
+            return false;
+        }
+        System.out.println("Player Survived -- Room cleared");
+        return true;
+    }
+
+    private void playerActs(Player player, Room room) {
+        // --- player's turn: hit the first thing still standing ---
+        Monster target = firstLiving(room);
+        if (target == null) return;
+
+        int damage = player.getAttackPower();
+        target.takeDamage(damage);
+
+        System.out.println("      you hit " + target.getName() + " for " + damage);
+        if (!target.isAlive()) {
+            player.addXp(target.getXpReward());
+            player.addGold(target.getXpReward() * 2);
+
+            System.out.println("      " + target.getName() + " dies");
+        }
+    }
+
+    private void checkForTacticsChange(Monster m) {
+        double threshold = GameConfig.getInstance().getDouble("fleeThreshold");
+        if (m.hpFraction() >= threshold) return;
+        if (m.getStrategy() instanceof SkittishStrategy) return;
+        String from = m.getStrategy().name();
+        m.setStrategy(new SkittishStrategy());
+
+        System.out.println( m.getName() + " changed strategy from " + from + " to " + m.getStrategy().name());
     }
 
     /**
@@ -65,6 +92,7 @@ public class Combat {
      *  - a monster cannot CHANGE tactics when it is badly wounded, because the behaviour
      *    is not a thing that can be swapped -- it is code baked into the encounter loop
      */
+
     private void monsterActs(Monster m, Player player, Room room) {
 
         if(m.getStrategy() == null) return;
