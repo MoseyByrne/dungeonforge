@@ -1,5 +1,6 @@
 package dungeonforge;
 
+import dungeonforge.events.EventBus;
 import dungeonforge.behavior.Action;
 import dungeonforge.behavior.AggressiveStrategy;
 import dungeonforge.behavior.CombatStrategy;
@@ -120,7 +121,7 @@ class StrategyObserverTest {
         m.setStrategy(new AggressiveStrategy());
         room.addMonster(m);
 
-        new Combat().fight(new Player("P"), room, 1);
+        new Combat(new EventBus()).fight(new Player("P"), room, 1);
 
         assertFalse(m.getStrategy().name() == "aggressive",
                 "a monster driven below the flee threshold should change tactics");

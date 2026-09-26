@@ -1,3 +1,4 @@
+dungeonforge\events\EventBus.class
 dungeonforge\behavior\RangedStrategy.class
 dungeonforge\factory\ForgeThemeKit.class
 dungeonforge\factory\ThemeRegistry.class
@@ -16,15 +17,20 @@ dungeonforge\behavior\SkittishStrategy.class
 dungeonforge\core\Monster.class
 dungeonforge\core\DungeonLevel.class
 dungeonforge\behavior\Action$Type.class
+dungeonforge\events\Quest.class
 dungeonforge\core\Entity.class
+dungeonforge\events\EventType.class
 dungeonforge\factory\MonsterFactory.class
+dungeonforge\events\QuestTracker.class
 dungeonforge\factory\ThemeKit.class
 dungeonforge\items\Weapon.class
 dungeonforge\items\Potion.class
 dungeonforge\core\Room.class
 dungeonforge\factory\BossRoomPopulator.class
 dungeonforge\factory\RoomPopulator.class
+dungeonforge\events\GameEvent.class
 dungeonforge\core\Player.class
+dungeonforge\events\GameEventListener.class
 dungeonforge\Main.class
 dungeonforge\behavior\HealerStrategy.class
 dungeonforge\config\Json.class
