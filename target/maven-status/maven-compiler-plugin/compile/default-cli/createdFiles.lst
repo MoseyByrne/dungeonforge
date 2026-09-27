@@ -37,6 +37,7 @@ dungeonforge\events\GameEventListener.class
 dungeonforge\Main.class
 dungeonforge\behavior\HealerStrategy.class
 dungeonforge\config\Json.class
+dungeonforge\events\DangerMeter.class
 dungeonforge\factory\MonsterDef.class
 dungeonforge\items\Treasure.class
 dungeonforge\behavior\CombatStrategy.class

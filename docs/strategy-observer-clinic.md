@@ -49,18 +49,22 @@ it.
 **Add a fourth listener.** Something simple — a `StatisticsCollector` that counts events by
 type, or a `DangerMeter` that notices when your HP drops below 25%. Subscribe it in `Main`.
 
-| Question | Your answer |
-|---|---|
-| How many **new** files? | |
-| Did `Combat.java` change? | |
-| Did `EventBus.java` change? | |
-| Did any existing listener change? | |
-| Which files changed at all? | |
+| Question | Your answer             |
+|---|-------------------------|
+| How many **new** files? | 1                       |
+| Did `Combat.java` change? | no                      |
+| Did `EventBus.java` change? | no                      |
+| Did any existing listener change? | no                      |
+| Which files changed at all? | added one, changed main |
 
 **Paste `git diff --stat`:**
 
-```
-
+```bash
+$ git diff --stat
+ docs/strategy-observer-clinic.md                   | 14 ++++++------
+ src/main/java/dungeonforge/Main.java               |  3 +++
+ src/main/java/dungeonforge/events/DangerMeter.java | 26 ++++++++++++++++++++--
+ 3 files changed, 34 insertions(+), 9 deletions(-)
 ```
 
 ### Then the question that matters
@@ -73,8 +77,7 @@ line, it's obvious, and it needs no `EventBus`, no `GameEvent`, and no `GameEven
 *concrete* scenario — a change somebody might ask for — where the direct-call version forces
 you to edit `Combat` and the bus version does not.
 
-> A good answer names a specific future feature. A great answer names one from this course's
-> remaining schedule.
+> The direct call makes Combat responsible for knowing about the quest tracker. If we later add an achievement for defeating a boss, we would have to edit Combat again to call the achievement system too. With the bus, the achievement system could listen for the existing monster death event, so Combat would not need to know it exists.
 
 
 ## D3 — The swap, demonstrated · 5 pts
