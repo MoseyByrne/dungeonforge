@@ -8,7 +8,9 @@ dungeonforge\items\Item.class
 dungeonforge\core\GameWorld.class
 dungeonforge\config\RandomSource.class
 dungeonforge\factory\StandardRoomPopulator.class
+dungeonforge\events\CombatLog$1.class
 dungeonforge\core\Combat$1.class
+dungeonforge\events\AchievementSystem.class
 dungeonforge\factory\TreasureRoomPopulator.class
 dungeonforge\items\Armor.class
 dungeonforge\factory\CryptThemeKit.class
@@ -21,6 +23,7 @@ dungeonforge\events\Quest.class
 dungeonforge\core\Entity.class
 dungeonforge\events\EventType.class
 dungeonforge\factory\MonsterFactory.class
+dungeonforge\events\AchievementSystem$1.class
 dungeonforge\events\QuestTracker.class
 dungeonforge\factory\ThemeKit.class
 dungeonforge\items\Weapon.class
@@ -37,6 +40,7 @@ dungeonforge\config\Json.class
 dungeonforge\factory\MonsterDef.class
 dungeonforge\items\Treasure.class
 dungeonforge\behavior\CombatStrategy.class
+dungeonforge\events\CombatLog.class
 dungeonforge\factory\WinterfellThemeKit.class
 dungeonforge\config\GameConfig.class
 dungeonforge\factory\FrostThemeKit.class
