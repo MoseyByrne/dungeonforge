@@ -1,12 +1,13 @@
 package dungeonforge.core;
 
-import dungeonforge.behavior.SkittishStrategy;
 import dungeonforge.behavior.Action;
+import dungeonforge.behavior.SkittishStrategy;
 import dungeonforge.config.GameConfig;
 import dungeonforge.events.EventBus;
 import dungeonforge.events.EventType;
 import dungeonforge.events.GameEvent;
 
+import javax.security.auth.callback.LanguageCallback;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,45 +32,46 @@ public class Combat {
 
     private final EventBus bus;
 
-    public Combat(EventBus bus) { this.bus = bus; }
+    public Combat(EventBus bus) {
+        this.bus = bus;
+    }
 
     private static final int MAX_ROUNDS = 40;
 
-    /** Returns true if the player survived the encounter. */
-    public boolean fight(Player player, Room room, int depth) {
-        if (!hasLiving(room)) return true;
-
-        int round = 0;
-        while (player.isAlive() && hasLiving(room) && round++ < MAX_ROUNDS) {
-
-            playerActs(player, room);
-
-            if (!hasLiving(room)) break;
-
-            // --- monsters' turn ---
-            for (Monster m : livingMonsters(room)) {
-                checkForTacticsChange(m);
-                monsterActs(m, player, room);
-                if(!player.isAlive()) break;
-            }
+    /**
+     * WEEK 7 -- one round of MONSTER actions.
+     *
+     * Week 5's fight() ran an entire battle in a single call, because nobody was typing.
+     * Now a human acts one command at a time, so the encounter has to resolve one round at a
+     * time too. The player's half of a round has moved out of this class entirely -- find out
+     * where in US-5.1.
+     */
+    public void monsterTurns(Player player, Room room) {
+        for (Monster m : livingMonsters(room)) {
+            checkForTacticsChange(m);
+            monsterActs(m, player, room);
+            if (!player.isAlive()) break;
         }
-
         if (!player.isAlive()) {
             bus.publish(GameEvent.of(EventType.PLAYER_DIED));
-            return false;
+        } else if (!hasLiving(room)) {
+            bus.publish(GameEvent.of(EventType.ROOM_CLEARED, "room", room.getId()));
         }
-        bus.publish(GameEvent.of(EventType.ROOM_CLEARED, "room", room.getId()));
-        return true;
     }
 
-    private void playerActs(Player player, Room room) {
+    /** Damage the player deals. Called by whatever represents "the player attacks". */
+    public void playerStrikes(Player player, Monster target) {
+        playerActsOn(player, target);
+    }
+
+    public Monster firstLivingIn(Room room) { return firstLiving(room); }
+
+
+    private void playerActsOn(Player player, Monster target) {
         // --- player's turn: hit the first thing still standing ---
-        Monster target = firstLiving(room);
-        if (target == null) return;
 
         int damage = player.getAttackPower();
         target.takeDamage(damage);
-
         bus.publish(GameEvent.of(EventType.DAMAGE_DEALT,
                 "target", target.getName(),
                 "amount", damage
@@ -77,17 +79,10 @@ public class Combat {
         if (!target.isAlive()) {
             player.addXp(target.getXpReward());
             player.addGold(target.getXpReward() * 2);
-
             bus.publish(GameEvent.of(EventType.MONSTER_DIED,
-                    "name", target.getName(),
-                    "xp", target.getXpReward()
-            ));
-            bus.publish(GameEvent.of(EventType.XP_GAINED,
-                    "amount", target.getXpReward()
-            ));
-            bus.publish(GameEvent.of(EventType.GOLD_GAINED,
-                    "amount", target.getXpReward() *2
-            ));
+                    "name", target.getName(), "xp", target.getXpReward()));
+            bus.publish(GameEvent.of(EventType.XP_GAINED, "amount", target.getXpReward()));
+            bus.publish(GameEvent.of(EventType.GOLD_GAINED, "amount", target.getXpReward() * 2));
         }
     }
 
@@ -95,14 +90,11 @@ public class Combat {
         double threshold = GameConfig.getInstance().getDouble("fleeThreshold");
         if (m.hpFraction() >= threshold) return;
         if (m.getStrategy() instanceof SkittishStrategy) return;
+
         String from = m.getStrategy().name();
         m.setStrategy(new SkittishStrategy());
-
         bus.publish(GameEvent.of(EventType.STRATEGY_CHANGED,
-                "name", m.getName(),
-                "from", from,
-                "to", m.getStrategy().name()
-        ));
+                "name", m.getName(), "from", from, "to", m.getStrategy().name()));
     }
 
     /**
@@ -113,58 +105,37 @@ public class Combat {
      *  - a monster cannot CHANGE tactics when it is badly wounded, because the behaviour
      *    is not a thing that can be swapped -- it is code baked into the encounter loop
      */
-
     private void monsterActs(Monster m, Player player, Room room) {
-
         if(m.getStrategy() == null) return;
-
         Action action = m.getStrategy().chooseAction(m, player, room);
-
-        if (action == null) return;
+        if( action == null ) return;
 
         switch (action.getType()) {
-
             case ATTACK -> {
                 int dmg = m.getAttackPower();
                 player.takeDamage(dmg);
                 bus.publish(GameEvent.of(EventType.DAMAGE_TAKEN,
-                        "source", m.getName(),
-                        "amount", dmg,
-                        "flavor", action.getFlavor()
-                ));
+                        "source", m.getName(), "amount", dmg, "flavor", action.getFlavor()));
             }
-
-            case RANGED_ATTACK -> {
-
-                int dmg = Math.max(1, (int)Math.round(m.getAttackPower() * 0.8 ));
+            case RANGED_ATTACK ->  {
+                int dmg = Math.max(1, (int)Math.round(m.getAttackPower() * 0.8));
                 player.takeDamage(dmg);
                 bus.publish(GameEvent.of(EventType.DAMAGE_TAKEN,
-                        "source", m.getName(),
-                        "amount", dmg,
-                        "flavor", action.getFlavor()
-                ));
+                        "source", m.getName(), "amount", dmg, "flavor", action.getFlavor()));
             }
-
             case FLEE -> {
-                room.getMonsters().remove(m);
-                bus.publish(GameEvent.of(EventType.MONSTER_FLED,
-                        "name", m.getName()
-                ));
+               room.getMonsters().remove(m);
+                bus.publish(GameEvent.of(EventType.MONSTER_FLED, "name", m.getName()));
             }
-
             case HEAL_ALLY -> {
-                if (action.getTarget() != null) {
+                if(action.getTarget() != null) {
+                    bus.message(action.getFlavor());
                     action.getTarget().heal(5);
                     bus.publish(GameEvent.of(EventType.MONSTER_HEALED,
-                            "healer", m.getName(),
-                            "target", action.getTarget().getName()
-                    ));
+                            "healer", m.getName(), "target", action.getTarget().getName()));
                 }
             }
-
-            case WAIT -> {
-                bus.publish(GameEvent.message(action.getFlavor()));
-            }
+            case WAIT -> bus.publish(GameEvent.message(action.getFlavor()));
         }
     }
 

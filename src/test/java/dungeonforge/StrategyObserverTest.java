@@ -1,30 +1,30 @@
 package dungeonforge;
 
-import dungeonforge.events.EventBus;
-import dungeonforge.events.EventType;
-import dungeonforge.events.GameEvent;
-import dungeonforge.events.GameEventListener;
-import dungeonforge.events.QuestTracker;
 import dungeonforge.behavior.Action;
 import dungeonforge.behavior.AggressiveStrategy;
 import dungeonforge.behavior.CombatStrategy;
 import dungeonforge.behavior.HealerStrategy;
-import dungeonforge.behavior.SkittishStrategy;
 import dungeonforge.behavior.RangedStrategy;
+import dungeonforge.behavior.SkittishStrategy;
 import dungeonforge.config.GameConfig;
 import dungeonforge.config.RandomSource;
 import dungeonforge.core.Combat;
 import dungeonforge.core.Monster;
 import dungeonforge.core.Player;
 import dungeonforge.core.Room;
+import dungeonforge.events.EventBus;
+import dungeonforge.events.EventType;
+import dungeonforge.events.GameEvent;
+import dungeonforge.events.GameEventListener;
+import dungeonforge.events.QuestTracker;
 import dungeonforge.factory.MonsterFactory;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** WEEK 5 -- Sprint 3. Strategy and Observer. */
 class StrategyObserverTest {
@@ -62,14 +62,14 @@ class StrategyObserverTest {
 
     @Test
     void skittishFleesOnceBadlyWounded() {
-        Monster m = wounded(20, 18);      // 10% health, under the 30% flee threshold
+        Monster m = wounded(20, 18);        // 10% health, under the 30% flee threshold
         Action a = new SkittishStrategy().chooseAction(m, new Player("P"), new Room("r"));
         assertEquals(Action.Type.FLEE, a.getType());
     }
 
     @Test
     void skittishStillFightsWhenHealthy() {
-        Monster m = wounded(20, 2);       // 90% health
+        Monster m = wounded(20, 2);         // 90% health
         Action a = new SkittishStrategy().chooseAction(m, new Player("P"), new Room("r"));
         assertEquals(Action.Type.ATTACK, a.getType());
     }
@@ -83,6 +83,7 @@ class StrategyObserverTest {
         room.addMonster(hurt);
 
         Action a = new HealerStrategy().chooseAction(healer, new Player("P"), room);
+
         assertEquals(Action.Type.HEAL_ALLY, a.getType());
         assertSame(hurt, a.getTarget());
     }
@@ -92,14 +93,16 @@ class StrategyObserverTest {
         Room room = new Room("r");
         Monster healer = new Monster("Bone Priest", 20, 3, 5);
         room.addMonster(healer);
+
         assertEquals(Action.Type.ATTACK,
                 new HealerStrategy().chooseAction(healer, new Player("P"), room).getType());
     }
 
-    /** The data file decides behaviour, so a designer can retuune it without a programmer. */
+    /** The data file decides behaviour, so a designer can retune it without a programmer. */
     @Test
     void theFactoryAssignsBehaviourFromTheDataFile() {
         MonsterFactory factory = new MonsterFactory();
+
         assertEquals("healer", factory.create("bone_priest", 1).getStrategy().name());
         assertEquals("ranged", factory.create("imp", 1).getStrategy().name());
         assertEquals("skittish", factory.create("crypt_rat", 1).getStrategy().name());
@@ -127,17 +130,26 @@ class StrategyObserverTest {
         EventBus bus = new EventBus();
         List<GameEvent> seen = new ArrayList<>();
         bus.subscribe(seen::add);
+
         Room room = new Room("r");
         Monster m = new Monster("Slag Hound", 25, 3, 5);
         m.setStrategy(new AggressiveStrategy());
         room.addMonster(m);
 
-        new Combat(bus).fight(new Player("P"), room, 1);
+        // WEEK 7 UPDATE: Combat.fight() is gone. Splitting it into playerStrikes() and
+        // monsterTurns() was the right move -- a human now acts one command at a time -- but
+        // it broke this Week 5 test, which is exactly what should happen. A refactor that
+        // changes an API is supposed to make its callers fail loudly.
+        Combat combat = new Combat(bus);
+        Player p = new Player("P");
+        for (int round = 0; round < 10 && m.isAlive() && p.isAlive(); round++) {
+            combat.playerStrikes(p, m);
+            if (m.isAlive()) combat.monsterTurns(p, room);
+        }
 
         assertTrue(seen.stream().anyMatch(e -> e.getType() == EventType.STRATEGY_CHANGED),
                 "a monster driven below the flee threshold should change tactics");
     }
-
 
     // ---------- US-3.3 and US-3.4: Observer ----------
 
@@ -229,6 +241,7 @@ class StrategyObserverTest {
     void earlierWeeksStillHold() {
         MonsterFactory factory = new MonsterFactory();
         assertEquals(19, factory.blueprintCount(), "Week 4's data loading");
+
         RandomSource.getInstance().reseed(99L);
         int first = factory.create("skeleton", 3).getMaxHp();
         RandomSource.getInstance().reseed(99L);
