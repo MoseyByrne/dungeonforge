@@ -15,12 +15,12 @@
 ## Capacity — from your own numbers
 
 | Sprint | Committed | Completed |
-|---|---|---|
-| Sprint 0 (Wk 2) | 7 | ____ |
-| Sprint 1 (Wk 3) | 8 | ____ |
-| Sprint 2 (Wk 4) | 10 | ____ |
-| Sprint 3 (Wk 5) | 10 | ____ |
-| Sprint 4 (Wk 6, catch-up) | — | ____ |
+|---|---|-----------|
+| Sprint 0 (Wk 2) | 7 | __?__     |
+| Sprint 1 (Wk 3) | 8 | __8__     |
+| Sprint 2 (Wk 4) | 10 | _?___     |
+| Sprint 3 (Wk 5) | 10 | __10__    |
+| Sprint 4 (Wk 6, catch-up) | — | __0__     |
 
 Five sprints of data. **If your completed column averages below 8, drop US-5.3 (the macro)
 and say so in your retro.** It is the most self-contained story here and the sprint still
@@ -70,13 +70,13 @@ demonstrates Command without it.
 ## Calibration
 
 | Story | Estimated | Actual hours | High, low, about right? |
-|---|---|---|---|
-| US-5.1 | 4 | | |
-| US-5.2 | 3 | | |
-| US-5.3 | 2 | | |
-| US-5.4 | 1 | | |
+|---|---|--------------|---|
+| US-5.1 | 4 | 4            | about right|
+| US-5.2 | 3 | 3            | about right|
+| US-5.3 | 2 | 2            | about right|
+| US-5.4 | 1 | 1            | about right|
 
-**Points completed:** ____ · **Running velocity:** ____
+**Points completed:** _10___ · **Running velocity:** __~45__
 
 ## Sprint Review — one sentence
-
+> This sprint replaced the large `gameLoop()` condition chain with command objects, making complete undo, aliases, macro commands, and session history possible.
