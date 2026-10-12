@@ -40,12 +40,14 @@ dungeonforge\items\Item.class
 dungeonforge\config\RandomSource.class
 dungeonforge\factory\StandardRoomPopulator.class
 dungeonforge\events\CombatLog$1.class
+dungeonforge\commands\MacroCommand.class
 dungeonforge\commands\CommandFactory.class
 dungeonforge\factory\TreasureRoomPopulator.class
 dungeonforge\commands\UseItemCommand.class
 dungeonforge\commands\Command.class
 dungeonforge\behavior\SkittishStrategy.class
 dungeonforge\commands\AbstractCommand.class
+dungeonforge\items\Hourglass.class
 dungeonforge\core\DungeonLevel.class
 dungeonforge\events\EventType.class
 dungeonforge\commands\TurnSnapshot.class
