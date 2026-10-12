@@ -10,6 +10,7 @@ public abstract class AbstractCommand implements Command {
     protected final String args;
 
     private boolean actuallyRan;
+    private TurnSnapshot snapshot;
 
     public AbstractCommand(GameContext ctx, String args) {
         this.ctx = ctx;
@@ -22,9 +23,15 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public final void execute() {
+        snapshot = TurnSnapshot.capture(player(), room());
         actuallyRan = doExecute();
 
-        if (actuallyRan && endsTurn()) {
+        if (!actuallyRan) {
+            snapshot = null;
+            return;
+        }
+
+        if (endsTurn()) {
             ctx.runMonsterTurns();
         }
     }
@@ -33,6 +40,11 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public void undo() {
+        if (snapshot != null) {
+            ctx.setCurrentRoom(snapshot.getRoom());
+            snapshot.restore();
+            bus().message("The last action was undone.");
+        }
     }
 
     @Override

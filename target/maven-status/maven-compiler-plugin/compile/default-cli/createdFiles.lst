@@ -48,6 +48,7 @@ dungeonforge\behavior\SkittishStrategy.class
 dungeonforge\commands\AbstractCommand.class
 dungeonforge\core\DungeonLevel.class
 dungeonforge\events\EventType.class
+dungeonforge\commands\TurnSnapshot.class
 dungeonforge\commands\TakeCommand.class
 dungeonforge\factory\MonsterFactory.class
 dungeonforge\events\AchievementSystem$1.class
