@@ -16,6 +16,7 @@ dungeonforge\commands\MoveCommand.class
 dungeonforge\behavior\Action$Type.class
 dungeonforge\events\Quest.class
 dungeonforge\core\Entity.class
+dungeonforge\commands\CommandHistory.class
 dungeonforge\events\QuestTracker.class
 dungeonforge\items\Weapon.class
 dungeonforge\items\Potion.class
@@ -47,6 +48,7 @@ dungeonforge\behavior\SkittishStrategy.class
 dungeonforge\commands\AbstractCommand.class
 dungeonforge\core\DungeonLevel.class
 dungeonforge\events\EventType.class
+dungeonforge\commands\TurnSnapshot.class
 dungeonforge\commands\TakeCommand.class
 dungeonforge\factory\MonsterFactory.class
 dungeonforge\events\AchievementSystem$1.class
