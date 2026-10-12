@@ -1,6 +1,7 @@
 package dungeonforge.commands;
 
 import dungeonforge.events.GameEvent;
+import dungeonforge.items.Hourglass;
 import dungeonforge.items.Item;
 import dungeonforge.items.Potion;
 
@@ -15,6 +16,19 @@ public class UseItemCommand extends AbstractCommand {
         Item item = player().findItem(args);
 
         if (item == null) { bus().message("You have nothing like that to use.");
+            return false;
+        }
+
+        if (item instanceof Hourglass hourglass) {
+            if (!hourglass.hasCharges()) {
+                bus().message("The hourglass is spent. The sand will not run again.");
+                return false;
+            }
+            hourglass.spendCharges();
+            bus().message("Sand runs backwards. The last moment unhappens.");
+            if (!ctx.getHistory().undoLast()) {
+                bus().message("...but there was nothing to take back.");
+            }
             return false;
         }
 
