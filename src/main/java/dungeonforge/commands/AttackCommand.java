@@ -4,6 +4,8 @@ import dungeonforge.core.Monster;
 
 public class AttackCommand extends AbstractCommand {
 
+    private int targetHpBefore;
+
     public AttackCommand(GameContext ctx, String args) {
         super(ctx, args);
     }
@@ -21,6 +23,7 @@ public class AttackCommand extends AbstractCommand {
             return false;
         }
 
+        targetHpBefore = target.getHp();
         ctx.getCombat().playerStrikes(player(), target);
         return true;
     }
@@ -39,6 +42,18 @@ public class AttackCommand extends AbstractCommand {
         }
 
         return null;
+    }
+
+    @Override
+    public void undo() {
+        Monster target = findTarget();
+
+        if (target != null) {
+            target.setHp(targetHpBefore);
+            bus().message("The attack against "
+                    + target.getName()
+                    + " was undone.");
+        }
     }
 
     @Override

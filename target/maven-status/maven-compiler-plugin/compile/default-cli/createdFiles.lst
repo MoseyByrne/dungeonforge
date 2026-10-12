@@ -16,6 +16,7 @@ dungeonforge\commands\MoveCommand.class
 dungeonforge\behavior\Action$Type.class
 dungeonforge\events\Quest.class
 dungeonforge\core\Entity.class
+dungeonforge\commands\CommandHistory.class
 dungeonforge\events\QuestTracker.class
 dungeonforge\items\Weapon.class
 dungeonforge\items\Potion.class

@@ -24,7 +24,7 @@ public abstract class AbstractCommand implements Command {
     public final void execute() {
         actuallyRan = doExecute();
 
-        if (endsTurn()) {
+        if (actuallyRan && endsTurn()) {
             ctx.runMonsterTurns();
         }
     }
@@ -33,6 +33,11 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public void undo() {
+    }
+
+    @Override
+    public boolean isUndoable() {
+        return actuallyRan;
     }
 
     @Override

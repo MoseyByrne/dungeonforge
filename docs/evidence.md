@@ -70,10 +70,10 @@ register("drop", DropCommand::new);
 **The naive-undo failure table from Part D2 step 2:**
 
 | | HP | XP | Gold | Monster HP |
-|---|---|---|---|---|
-| Before attack | | | | |
-| After attack | | | | |
-| After naive undo | | | | |
+|---|----|----|------|------------|
+| Before attack | 80 | 0  | 0    | 17         |
+| After attack | 76 | 0  | 0    | 7          |
+| After naive undo | 76 | 0  | 0    | 17         |
 
 **The same table after `TurnSnapshot`:**
 

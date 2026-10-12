@@ -99,6 +99,14 @@ public class CommandParser {
             c.getBus().message(b.toString());
         }));
 
+        register("undo", (GameContext c, String a) ->
+                new SimpleCommand("undo", () -> {
+                    if (!c.getHistory().undoLast()) {
+                        c.getBus().message("There is nothing to undo.");
+                    }
+                })
+        );
+
         register("help", (GameContext c, String a) -> new SimpleCommand("help", () -> {
             c.getBus().message("Available: " + verbs() + "\n Aliases: " + aliases);
         }));
@@ -115,7 +123,7 @@ public class CommandParser {
         Room room = ctx.getCurrentRoom();
         DungeonLevel level = ctx.getWorld().levelContaining(room);
         StringBuilder b = new StringBuilder();
-        b.append("[").append(room.getId()).append("Level ").append(level.getDepth()).append(": ")
+        b.append("[").append(room.getId()).append("] Level ").append(level.getDepth()).append(": ")
                 .append(level.getThemeName());
 
         if (!room.getFlavor().isEmpty()) {b.append("\n    \"").append(room.getFlavor()).append("\"");}
