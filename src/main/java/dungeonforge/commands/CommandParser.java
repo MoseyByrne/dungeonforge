@@ -65,6 +65,8 @@ public class CommandParser {
         alias("get", "take");
         alias("t", "take");
 
+        register("loot", this::createLootCommand);
+
         register("drop", DropCommand::new);
 
         register("use", UseItemCommand::new);
@@ -117,6 +119,34 @@ public class CommandParser {
             c.stop();
         }));
         alias("exit", "quit");
+    }
+
+    private Command createLootCommand(GameContext ctx, String ignored) {
+        Room room = ctx.getCurrentRoom();
+        List<Command> children = new ArrayList<>();
+
+        // Create one TakeCommand for every floor item.
+        for (Item item : new ArrayList<>(room.getFloorItems())) {
+            children.add(new TakeCommand(ctx, item.getName()));
+        }
+
+        // Create one TakeCommand for every chest item.
+        if (room.getChest() != null) {
+            for (Item item :
+                    new ArrayList<>(room.getChest().getContents())) {
+                children.add(new TakeCommand(ctx, item.getName()));
+            }
+        }
+
+        // No items means no action and no turn.
+        if (children.isEmpty()) {
+            return new NoCommand(
+                    ctx.getBus(),
+                    "There is nothing here to loot."
+            );
+        }
+
+        return new MacroCommand("loot", children);
     }
 
     public String describeRoom(GameContext ctx) {

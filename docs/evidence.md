@@ -86,18 +86,38 @@ register("drop", DropCommand::new);
 ## 4. AFTER — US-5.3 and US-5.4
 
 **Paste a `loot` that picks up three things, then an `undo` that puts them all back:**
-
-```
-
-```
-
 **Paste the hourglass rewinding a turn, with `inventory` before and after:**
 
+```bash
+loot
+[HP 76/80] > 
+  You take Bone Shortsword.
+  You take Bone Shortsword.
+  You take Grave Shroud.
+
+i
+[HP 76/80] > 
+  You are carrying:
+    - Small Healing Draught [heals 22] (0.3kg, 20g)
+    - Chronomaster's hourglass [2 charges] (rewinds time)
+    - Bone Shortsword [dmg 6] (2.0kg, 50g)
+    - Bone Shortsword [dmg 6] (2.0kg, 50g)
+    - Grave Shroud [def 3] (3.0kg, 43g)
+
+undo
+[HP 76/80] > 
+  The last action was undone.
+  The last action was undone.
+  The last action was undone.
+
+i
+[HP 76/80] > 
+  You are carrying:
+    - Small Healing Draught [heals 22] (0.3kg, 20g)
+    - Chronomaster's hourglass [2 charges] (rewinds time)
 ```
 
-```
-
-**How long did US-5.4 actually take you?** ____ minutes
+**How long did US-5.4 actually take you?** _unsure___ minutes
 
 ## 5. The replay
 

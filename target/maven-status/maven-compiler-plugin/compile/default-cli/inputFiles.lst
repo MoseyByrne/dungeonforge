@@ -12,6 +12,7 @@ C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\s
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\CommandParser.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\DropCommand.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\GameContext.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\MacroCommand.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\MoveCommand.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\NoCommand.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\commands\SimpleCommand.java
@@ -51,6 +52,7 @@ C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\s
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\factory\WinterfellThemeKit.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Armor.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Chest.java
+C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Hourglass.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Item.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Potion.java
 C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\main\java\dungeonforge\items\Treasure.java

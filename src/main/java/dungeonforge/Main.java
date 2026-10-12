@@ -22,6 +22,7 @@ import dungeonforge.events.Quest;
 import dungeonforge.events.QuestTracker;
 import dungeonforge.items.Item;
 import dungeonforge.items.Potion;
+import dungeonforge.items.Hourglass;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -90,6 +91,7 @@ public final class Main {
 
             Player player = new Player(res.getString("playerName"));
             player.addItem(new Potion("Small Healing Draught", 0.3, 20, 22));
+            player.addItem(new Hourglass(2));
             GameWorld world = new GameWorld(player);
 
             EventBus bus = new EventBus();
