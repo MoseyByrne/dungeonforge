@@ -19,10 +19,13 @@ public class CommandHistory {
 
     public void push(Command command) {
         replaying.add(command.getDescription());
-        if (!command.isUndoable()) { return;
+        if (!command.isUndoable()) {
+            return;
         }
         undoStack.push(command);
-        while (undoStack.size() > maxDepth) {undoStack.removeLast();}
+        while (undoStack.size() > maxDepth) {
+            undoStack.removeLast();
+        }
     }
 
     public boolean undoLast() {

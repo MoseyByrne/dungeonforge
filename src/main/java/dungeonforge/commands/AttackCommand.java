@@ -4,7 +4,6 @@ import dungeonforge.core.Monster;
 
 public class AttackCommand extends AbstractCommand {
 
-
     public AttackCommand(GameContext ctx, String args) {
         super(ctx, args);
     }

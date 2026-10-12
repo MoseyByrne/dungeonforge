@@ -17,13 +17,24 @@ public abstract class AbstractCommand implements Command {
         this.args = args == null ? "" : args.trim();
     }
 
-    public Player player() { return ctx.getPlayer(); }
-    public EventBus bus() { return ctx.getBus(); }
-    public Room room() { return ctx.getCurrentRoom(); }
+    public Player player() {
+        return ctx.getPlayer();
+    }
+
+    public EventBus bus() {
+        return ctx.getBus();
+    }
+
+    public Room room() {
+        return ctx.getCurrentRoom();
+    }
 
     @Override
     public final void execute() {
-        snapshot = TurnSnapshot.capture(player(), room());
+        if (endsTurn()) {
+            snapshot = TurnSnapshot.capture(player(), room());
+        }
+
         actuallyRan = doExecute();
 
         if (!actuallyRan) {
@@ -40,11 +51,13 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public void undo() {
-        if (snapshot != null) {
-            ctx.setCurrentRoom(snapshot.getRoom());
-            snapshot.restore();
-            bus().message("The last action was undone.");
+        if (snapshot == null) {
+            return;
         }
+
+        snapshot.restore();
+        ctx.setCurrentRoom(snapshot.getRoom());
+        bus().message("The last action was undone.");
     }
 
     @Override
