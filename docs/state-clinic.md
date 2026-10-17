@@ -38,11 +38,37 @@ Your Week 8 code stores it as an **object**. Measure the difference.
 
 Add a `"stunned"` state that lasts one turn and prevents acting.
 
-| Question | Your answer |
-|---|---|
-| Which methods in `Combat` did you have to edit? | |
-| How many conditionals did you add or change? | |
-| What stops someone typing `setStateName("stnuned")` and getting no error? | |
+| Question | Your answer                                                                                                                        |
+|---|------------------------------------------------------------------------------------------------------------------------------------|
+| Which methods in `Combat` did you have to edit? | monsterTurns(), updateMonsterState(), and monsterActs(). I also temporarily edited playerStrikes() to trigger stunned for testing. |
+| How many conditionals did you add or change? | 2                                                                                                                                  |
+| What stops someone typing `setStateName("stnuned")` and getting no error? |Nothing. The setter accepts any String, so the typo compiles without an error even though it has no defined state behavior.                                                                                                                                    |
+
+```bash
+[HP 80/80] > north
+
+  You go north.
+  ACHIEVEMENT: Cornered -- Force an enemy to change tactics
+  Ghoul changes tactics: idle -> hunting.
+
+[HP 80/80] > attack
+
+  You hit Ghoul for 10.
+  Ghoul changes tactics: stunned -> hunting.
+
+[HP 80/80] > look
+
+  [L1R1] Level 1: Crypt
+  "Damp stone. Something drips in the dark, patiently."
+  Hostile: Ghoul (8/18 HP, ATK 2, hunting)
+  Iron-bound Chest:
+    - Vial of Still Water [heals 21] (0.4kg, 25g)
+    - Bone Shortsword [dmg 6] (2.0kg, 50g)
+    - Grave Shroud [def 3] (3.0kg, 43g)
+  Exits: south, north
+
+[HP 80/80] > 
+```
 
 > Revert this experiment before continuing. It exists to be measured, not kept.
 

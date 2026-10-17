@@ -41,8 +41,10 @@ public class Combat {
     /** One round of MONSTER actions. */
     public void monsterTurns(Player player, Room room) {
         for (Monster m : livingMonsters(room)) {
-            updateMonsterState(m);
+
             monsterActs(m, player, room);
+            updateMonsterState(m);
+
             if (!player.isAlive()) break;
         }
         if (!player.isAlive()) {
@@ -69,6 +71,13 @@ public class Combat {
             m.setStateName("dead");
             return;
         }
+
+        if (current.equals("stunned")) {
+            announce(m, current, "hunting");
+            m.setStateName("hunting");
+            return;
+        }
+
         if (current.equals("idle")) {
             announce(m, current, "hunting");
             m.setStateName("hunting");
@@ -107,7 +116,12 @@ public class Combat {
     /** TODO(week 8): PLACE 2 OF 3 -- "may this monster act?", as a conditional. */
     private void monsterActs(Monster m, Player player, Room room) {
         String state = m.getStateName();
-        if (state.equals("idle") || state.equals("dead")) return;
+        //if (state.equals("idle") || state.equals("dead")) return;
+
+        if (state.equals("idle")
+                || state.equals("dead")
+                || state.equals("stunned")) return;
+
         if (m.getStrategy() == null) return;
 
         Action action = m.getStrategy().chooseAction(m, player, room);
@@ -153,6 +167,12 @@ public class Combat {
     public void playerStrikes(Player player, Monster target) {
         int damage = player.getAttackPower();
         target.takeDamage(damage);
+
+        // TEMPORARY: trigger stunned for the Part D2 experiment.
+        if (target.isAlive()) {
+            target.setStateName("stunned");
+        }
+
         bus.publish(GameEvent.of(EventType.DAMAGE_DEALT,
                 "target", target.getName(), "amount", damage));
 
