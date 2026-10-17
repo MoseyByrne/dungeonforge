@@ -5,6 +5,11 @@ import dungeonforge.core.GameWorld;
 import dungeonforge.core.Player;
 import dungeonforge.core.Room;
 import dungeonforge.events.EventBus;
+import dungeonforge.states.CombatState;
+import dungeonforge.states.ExploringState;
+import dungeonforge.states.GameState;
+
+import java.util.List;
 
 /**
  * WEEK 7 -- the RECEIVER, bundled.
@@ -25,6 +30,7 @@ public class GameContext {
 
     private Room currentRoom;
     private boolean running = true;
+    private GameState state = new ExploringState();
 
     public GameContext(GameWorld world, Player player, EventBus bus,
                        Combat combat, CommandHistory history) {
@@ -50,4 +56,32 @@ public class GameContext {
     public void runMonsterTurns() {
         if (player.isAlive()) combat.monsterTurns(player, currentRoom);
     }
+
+public GameState getState() {
+    return state;
 }
+
+public void transitionTo(GameState next) {
+    if (next == null || next.getClass() == state.getClass()) {
+        return;
+    }
+
+    state.onExit(this);
+    state = next;
+    state.onEnter(this);
+}
+
+public List<String> allowedVerbs() {
+    return state.availableCommands();
+}
+
+public void syncState() {
+    // TODO: Add game-over and inventory checks
+    // when those states have been created.
+
+    if (currentRoom.hasLivingMonsters()) {
+        transitionTo(new CombatState());
+    } else {
+        transitionTo(new ExploringState());
+    }
+}}

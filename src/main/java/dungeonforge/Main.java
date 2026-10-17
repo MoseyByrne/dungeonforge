@@ -86,6 +86,8 @@ public final class Main {
         bus.message("Type 'help' for what you can do. You are carrying an hourglass -- 'use hourglass' rewinds a turn.");
         parser.parse("look", ctx).execute();
 
+        ctx.syncState();
+
         if (script != null) {
             runScript(parser, ctx, history, Files.readAllLines(Path.of(script)));
         } else {
@@ -103,8 +105,10 @@ public final class Main {
     private static void gameLoop(CommandParser parser, GameContext ctx, CommandHistory history) {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 
+        ctx.syncState();
         while (ctx.isRunning() && ctx.getPlayer().isAlive()) {
-            System.out.print("\n[HP " + ctx.getPlayer().getHp() + "/"
+            System.out.print("\n[" + ctx.getState().name()
+                    + " | HP " + ctx.getPlayer().getHp() + "/"
                     + ctx.getPlayer().getMaxHp() + "] > ");
             System.out.flush();
 
@@ -116,6 +120,7 @@ public final class Main {
             Command command = parser.parse(line, ctx);   // text  -> object
             command.execute();                            // object -> effect
             history.push(command);                        // object -> undo stack + replay log
+            ctx.syncState();
         }
     }
 
@@ -135,6 +140,7 @@ public final class Main {
             Command command = parser.parse(line, ctx);
             command.execute();
             history.push(command);
+            ctx.syncState();
         }
     }
 
