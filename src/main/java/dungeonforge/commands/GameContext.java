@@ -8,6 +8,8 @@ import dungeonforge.events.EventBus;
 import dungeonforge.states.CombatState;
 import dungeonforge.states.ExploringState;
 import dungeonforge.states.GameState;
+import dungeonforge.states.GameOverState;
+import dungeonforge.states.InventoryState;
 
 import java.util.List;
 
@@ -57,31 +59,46 @@ public class GameContext {
         if (player.isAlive()) combat.monsterTurns(player, currentRoom);
     }
 
-public GameState getState() {
+    public GameState getState() {
     return state;
 }
 
-public void transitionTo(GameState next) {
-    if (next == null || next.getClass() == state.getClass()) {
+    public void transitionTo(GameState next) {
+        if (next == null || next.getClass() == state.getClass()) {
         return;
+        }
+
+        state.onExit(this);
+        state = next;
+        state.onEnter(this);
     }
 
-    state.onExit(this);
-    state = next;
-    state.onEnter(this);
-}
+    public void openPack() {
+        transitionTo(new InventoryState());
+    }
 
-public List<String> allowedVerbs() {
-    return state.availableCommands();
-}
-
-public void syncState() {
-    // TODO: Add game-over and inventory checks
-    // when those states have been created.
-
-    if (currentRoom.hasLivingMonsters()) {
-        transitionTo(new CombatState());
-    } else {
+    public void closePack() {
         transitionTo(new ExploringState());
     }
-}}
+
+    public List<String> allowedVerbs() {
+    return state.availableCommands();
+    }
+
+    public void syncState() {
+        if (!player.isAlive() || !running) {
+            transitionTo(new GameOverState());
+            return;
+        }
+
+        if (state instanceof InventoryState) {
+            return;
+        }
+
+        if (currentRoom.hasLivingMonsters()) {
+            transitionTo(new CombatState());
+        } else {
+            transitionTo(new ExploringState());
+        }
+    }
+}

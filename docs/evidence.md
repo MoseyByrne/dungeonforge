@@ -64,14 +64,23 @@ $ grep -n "getStateName" src/main/java/dungeonforge/core/Combat.java
 
 **Paste `help` in Exploring and in Combat, side by side:**
 
-```
+```bash
+[exploring | HP 80/80] > help
 
+  [exploring] Available: north, south, down, look, take, loot, drop, use, inventory, pack, status, quests, history, undo, help, quit
+  
+[combat | HP 80/80] > help
+
+  [combat] Available: attack, use, look, inventory, status, history, undo, help, quit
 ```
 
 **Paste an attempt to move during combat:**
 
-```
+```bash
+[combat | HP 80/80] > north
 
+  You cannot do that in combat mode.
+  Available here: attack, use, look, inventory, status, history, undo, help, quit
 ```
 
 **Paste the grep proving the guards are gone:**
@@ -80,14 +89,30 @@ $ grep -n "getStateName" src/main/java/dungeonforge/core/Combat.java
 grep -rn "hasLivingMonsters" src/main/java/dungeonforge/commands/
 ```
 
-```
-
+```bash
+$ grep -rn "hasLivingMonsters" src/main/java/dungeonforge/commands/
+src/main/java/dungeonforge/commands/CommandParser.java:183:        if (room.hasLivingMonsters()) {
+src/main/java/dungeonforge/commands/GameContext.java:98:        if (currentRoom.hasLivingMonsters()) {
 ```
 
 **Paste entering and leaving the pack, and the prompt in each mode:**
 
-```
+```bash
+[exploring | HP 80/80] > pack
 
+  --- Your pack --- Type 'back' to close.
+
+
+[pack | HP 80/80] > 
+
+help
+[pack | HP 80/80] > 
+  [pack] Available: use, inventory, drop, status, back, help, quit
+
+back
+[pack | HP 80/80] > 
+
+[exploring | HP 80/80] > 
 ```
 
 ## 3. AFTER — US-6.3
