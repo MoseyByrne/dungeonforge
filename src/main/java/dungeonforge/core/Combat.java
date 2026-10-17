@@ -22,6 +22,7 @@ public class Combat {
         for (Monster m : livingMonsters(room)) {
             monsterActs(m, player, room);
 
+            String beforeState = m.getState().label();
             CombatStrategy beforeStrategy = m.getStrategy();
             m.setState(m.getState().next(m, player));
 
@@ -35,7 +36,12 @@ public class Combat {
                                 ? "none" : m.getStrategy().name()));
             }
 
-            // TODO: Add a MONSTER_STATE_CHANGED event.
+            if (!beforeState.equals(m.getState().label())) {
+                bus.publish(GameEvent.of(EventType.MONSTER_STATE_CHANGED,
+                        "name", m.getName(),
+                        "from", beforeState,
+                        "to", m.getState().label()));
+            }
 
             if (!player.isAlive()) break;
         }
