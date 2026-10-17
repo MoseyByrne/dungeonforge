@@ -98,14 +98,36 @@ grep -rn "hasLivingMonsters" src/main/java/dungeonforge/commands/
 grep -n "getStateName\|\"enraged\"\|\"idle\"" src/main/java/dungeonforge/core/Combat.java
 ```
 
-```
-
+```bash
+No matches.
 ```
 
 **Paste a fight showing a monster moving through its lifecycle:**
 
-```
+```bash
+[HP 80/80] > look
 
+  [L1R1] Level 1: Crypt
+  "Damp stone. Something drips in the dark, patiently."
+  Hostile: Ghoul (18/18 HP, ATK 2, hunting)
+  Iron-bound Chest:
+    - Vial of Still Water [heals 21] (0.4kg, 25g)
+    - Bone Shortsword [dmg 6] (2.0kg, 50g)
+    - Grave Shroud [def 3] (3.0kg, 43g)
+  Exits: south, north
+
+[HP 80/80] > attack
+
+  You hit Ghoul for 10.
+  Ghoul hits you for 2.
+  ACHIEVEMENT: Cornered -- Force an enemy to change tactics
+  Ghoul changes tactics: ranged -> aggressive.
+
+[HP 78/80] > attack
+
+  You hit Ghoul for 10.
+  ACHIEVEMENT: First Blood -- Defeat your first monster
+  Ghoul dies. +12 XP.
 ```
 
 ## 4. AFTER — US-6.4
@@ -123,8 +145,61 @@ grep -n "getStateName\|\"enraged\"\|\"idle\"" src/main/java/dungeonforge/core/Co
 
 **`mvn test` summary:**
 
-```
-
+```bash
+$ mvn clean test
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< edu.redwoods.cis18:dungeonforge >-------------------
+[INFO] Building DungeonForge 0.7.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ dungeonforge ---
+[INFO] Deleting C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\target
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ dungeonforge ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ dungeonforge ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 66 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ dungeonforge ---
+[INFO] skip non existing resourceDirectory C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ dungeonforge ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 6 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ dungeonforge ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running dungeonforge.CommandTest
+[INFO] Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.163 s -- in dungeonforge.CommandTest
+[INFO] Running dungeonforge.FactoryTest
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.062 s -- in dungeonforge.FactoryTest
+[INFO] Running dungeonforge.SingletonTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.026 s -- in dungeonforge.SingletonTest
+[INFO] Running dungeonforge.SkeletonTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in dungeonforge.SkeletonTest
+[INFO] Running dungeonforge.StateTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s -- in dungeonforge.StateTest
+[INFO] Running dungeonforge.StrategyObserverTest
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.038 s -- in dungeonforge.StrategyObserverTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 72, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.237 s
+[INFO] Finished at: 2026-10-17T11:44:21-07:00
+[INFO] ------------------------------------------------------------------------
 ```
 
 **Green CI URL:**

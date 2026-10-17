@@ -20,7 +20,7 @@ public final class ThemeRegistry {
         kits.add(new CryptThemeKit(factory));
         kits.add(new ForgeThemeKit(factory));
         kits.add(new FrostThemeKit(factory));
-        // Part D: add your fourth kit here. One line.
+        kits.add(new WinterfellThemeKit(factory));
     }
 
     /** Levels cycle through the registered themes. */

@@ -121,6 +121,9 @@ class CommandTest {
         m.setStrategy(new dungeonforge.behavior.AggressiveStrategy());
         room.getMonsters().add(m);
 
+        // Let the idle monster notice the player before testing a counterattack.
+        m.setState(m.getState().next(m, player));
+
         int hpBefore = player.getHp();
         int monsterHpBefore = m.getHp();
 

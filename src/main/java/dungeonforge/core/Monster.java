@@ -1,7 +1,8 @@
 package dungeonforge.core;
 
 import dungeonforge.behavior.CombatStrategy;
-import dungeonforge.config.RandomSource;
+import dungeonforge.states.IdleState;
+import dungeonforge.states.MonsterState;
 
 /**
  * WEEK 1 -- a monster.
@@ -19,16 +20,8 @@ public class Monster extends Entity {
     private final int xpReward;
     private CombatStrategy strategy;
 
-    /**
-     * TODO(week 8, US-6.3): a monster's LIFECYCLE, stored as a string.
-     *
-     * "idle" -> "hunting" -> "enraged" -> "fleeing" -> "dead"
-     *
-     * This is exactly how the Gumball Machine starts in Chapter 10 of your textbook: a field
-     * holding the current state, and conditionals about that field scattered through every
-     * method that cares. Grep Combat.java for getStateName() before you start, and count.
-     */
-    private String stateName = "idle";
+    // WEEK 8: the monster's lifecycle is represented by a state object.
+    private MonsterState state = new IdleState();
 
     /**
      * WEEK 5 correction: stat variance used to be rolled here AND again in MonsterFactory,
@@ -49,8 +42,14 @@ public class Monster extends Entity {
     public CombatStrategy getStrategy()              { return strategy; }
     public void setStrategy(CombatStrategy strategy) { this.strategy = strategy; }
 
-    public String getStateName()          { return stateName; }
-    public void setStateName(String name) { this.stateName = name; }
+    public MonsterState getState() {
+        return state;
+    }
+
+    public void setState(MonsterState next) {
+        this.state = next;
+        next.onEnter(this);
+    }
 
     /** How close to death, as a fraction. Strategies read this to decide whether to run. */
     public double hpFraction() { return maxHp == 0 ? 0 : (double) hp / maxHp; }
@@ -58,6 +57,6 @@ public class Monster extends Entity {
     @Override
     public String describe() {
         return species + " (" + hp + "/" + maxHp + " HP, ATK " + attackPower
-                + ", " + stateName + ")";
+                + ", " + state.label() + ")";
     }
 }
