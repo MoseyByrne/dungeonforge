@@ -14,10 +14,10 @@
 ## Capacity
 
 | Sprint | Committed | Completed |
-|---|---|---|
-| Sprint 3 (Wk 5) | 10 | ____ |
-| Sprint 4 (Wk 6, catch-up) | — | ____ |
-| Sprint 5 (Wk 7) | 10 | ____ |
+|---|---|-----------|
+| Sprint 3 (Wk 5) | 10 | __10__    |
+| Sprint 4 (Wk 6, catch-up) | — | __0__     |
+| Sprint 5 (Wk 7) | 10 | _10___    |
 
 **If Sprint 5 came in under 8, drop US-6.2 and say so in your retro.** The pack screen is the
 most self-contained story here and the sprint still demonstrates State without it.
@@ -65,13 +65,13 @@ most self-contained story here and the sprint still demonstrates State without i
 ## Calibration
 
 | Story | Estimated | Actual hours | High, low, about right? |
-|---|---|---|---|
-| US-6.1 | 4 | | |
-| US-6.2 | 2 | | |
-| US-6.3 | 3 | | |
-| US-6.4 | 1 | | |
+|---|---|--------------|---|
+| US-6.1 | 4 | 4            |about right |
+| US-6.2 | 2 | 2            | about right|
+| US-6.3 | 3 | 3            | about right|
+| US-6.4 | 1 | 1            | about right|
 
 **Points completed:** ____ · **Running velocity:** ____
 
 ## Sprint Review — one sentence
-
+DungeonForge now uses State objects to manage game modes and monster lifecycles, limits commands to the current mode, and preserves monster state when undoing a turn.
