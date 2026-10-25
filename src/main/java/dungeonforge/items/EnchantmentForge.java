@@ -26,9 +26,10 @@ package dungeonforge.items;
  */
 public final class EnchantmentForge {
 
-    private EnchantmentForge() { }
+    private EnchantmentForge() {
+    }
 
-    public static final String[] KNOWN = { "flaming", "frost", "vampiric" };
+    public static final String[] KNOWN = {"flaming", "frost", "vampiric"};
 
     public static boolean isKnown(String enchantment) {
         for (String k : KNOWN) if (k.equalsIgnoreCase(enchantment)) return true;
@@ -40,69 +41,14 @@ public final class EnchantmentForge {
      * combination. Read that sentence again: the combination has to already have a class.
      */
     public static Weapon enchant(Weapon w, String enchantment) {
-        String e = enchantment == null ? "" : enchantment.toLowerCase().trim();
-        String n = w.getName();
-        double kg = w.getWeight();
-        int v = baseValue(w);
-        int d = baseDamage(w);
-
-        // ---- the table. 3 enchantments x 8 possible starting classes. It gets worse. ----
-        if (e.equals("flaming")) {
-            if (w instanceof FlamingWeapon)              return null;   // no class for double fire
-            if (w instanceof FlamingFrostWeapon)         return null;
-            if (w instanceof FlamingVampiricWeapon)      return null;
-            if (w instanceof FlamingFrostVampiricWeapon) return null;
-            if (w instanceof FrostVampiricWeapon)        return new FlamingFrostVampiricWeapon(n, kg, v, d);
-            if (w instanceof FrostWeapon)                return new FlamingFrostWeapon(n, kg, v, d);
-            if (w instanceof VampiricWeapon)             return new FlamingVampiricWeapon(n, kg, v, d);
-            return new FlamingWeapon(n, kg, v, d);
-        }
-        if (e.equals("frost")) {
-            if (w instanceof FrostWeapon)                return null;
-            if (w instanceof FlamingFrostWeapon)         return null;
-            if (w instanceof FrostVampiricWeapon)        return null;
-            if (w instanceof FlamingFrostVampiricWeapon) return null;
-            if (w instanceof FlamingVampiricWeapon)      return new FlamingFrostVampiricWeapon(n, kg, v, d);
-            if (w instanceof FlamingWeapon)              return new FlamingFrostWeapon(n, kg, v, d);
-            if (w instanceof VampiricWeapon)             return new FrostVampiricWeapon(n, kg, v, d);
-            return new FrostWeapon(n, kg, v, d);
-        }
-        if (e.equals("vampiric")) {
-            if (w instanceof VampiricWeapon)             return null;
-            if (w instanceof FlamingVampiricWeapon)      return null;
-            if (w instanceof FrostVampiricWeapon)        return null;
-            if (w instanceof FlamingFrostVampiricWeapon) return null;
-            if (w instanceof FlamingFrostWeapon)         return new FlamingFrostVampiricWeapon(n, kg, v, d);
-            if (w instanceof FlamingWeapon)              return new FlamingVampiricWeapon(n, kg, v, d);
-            if (w instanceof FrostWeapon)                return new FrostVampiricWeapon(n, kg, v, d);
-            return new VampiricWeapon(n, kg, v, d);
-        }
         return null;
     }
 
-    /**
-     * And here is the other tax. Every subclass overrode getDamage() and getValue() to ADD
-     * its bonus, so to build the next class up we must first SUBTRACT every bonus already
-     * applied and recover the original numbers. Two more hand-written tables.
-     */
     private static int baseDamage(Weapon w) {
-        if (w instanceof FlamingFrostVampiricWeapon) return w.getDamage() - 4 - 3;
-        if (w instanceof FlamingFrostWeapon)         return w.getDamage() - 4 - 3;
-        if (w instanceof FlamingVampiricWeapon)      return w.getDamage() - 4;
-        if (w instanceof FrostVampiricWeapon)        return w.getDamage() - 3;
-        if (w instanceof FlamingWeapon)              return w.getDamage() - 4;
-        if (w instanceof FrostWeapon)                return w.getDamage() - 3;
         return w.getDamage();
     }
 
     private static int baseValue(Weapon w) {
-        if (w instanceof FlamingFrostVampiricWeapon) return w.getValue() - 60 - 45 - 90;
-        if (w instanceof FlamingFrostWeapon)         return w.getValue() - 60 - 45;
-        if (w instanceof FlamingVampiricWeapon)      return w.getValue() - 60 - 90;
-        if (w instanceof FrostVampiricWeapon)        return w.getValue() - 45 - 90;
-        if (w instanceof FlamingWeapon)              return w.getValue() - 60;
-        if (w instanceof FrostWeapon)                return w.getValue() - 45;
-        if (w instanceof VampiricWeapon)             return w.getValue() - 90;
         return w.getValue();
     }
 }
