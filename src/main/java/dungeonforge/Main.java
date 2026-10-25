@@ -69,7 +69,8 @@ public final class Main {
         player.addItem(new Potion("Small Healing Draught", 0.3, 20, 22));
         player.addItem(new Hourglass(2));                 // US-5.4
         // WEEK 9 (PROVIDED) -- starter weapon for the enchantment exercises.
-        new dungeonforge.items.BasicWeapon("Notched Shortsword", 2.5, 25, 5);
+        player.addItem(new dungeonforge.items.BasicWeapon(
+                "Notched Shortsword", 2.5, 25, 5));
         GameWorld world = new GameWorld(player);
 
         EventBus bus = new EventBus();
