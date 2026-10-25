@@ -7,7 +7,7 @@ public class ExploringState implements GameState {
     private static final List<String> VERBS = List.of(
             "north", "south", "down",
             "look", "take", "loot", "drop", "use",
-            "inventory", "pack", "status", "quests",
+            "inventory", "pack", "equip", "enchant", "status", "quests",
             "history", "undo", "help", "quit"
     );
 

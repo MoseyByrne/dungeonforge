@@ -40,7 +40,7 @@ public class WinterfellThemeKit implements ThemeKit {
 
         switch(RandomSource.getInstance().nextInt(4)) {
             case 0:
-                return new Weapon("Valarian Steel Greatsword", 2.0, 40 + depth * 10, 5 + depth);
+                return new FrostVampiricWeapon("Valarian Steel Greatsword", 2.0, 40 + depth * 10, 5 + depth);
             case 1:
                 return new Armor("Direwolf pup", 3.0, 35 + depth * 8, 2 + depth);
             case 2:
