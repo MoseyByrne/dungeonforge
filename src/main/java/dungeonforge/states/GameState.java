@@ -10,6 +10,8 @@ public interface GameState {
 
     default void onExit(GameContext ctx) {}
 
+    default boolean isTerminal() { return false; }
+
     List<String> availableCommands();
 
     String name();
