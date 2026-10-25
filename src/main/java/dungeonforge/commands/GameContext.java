@@ -81,12 +81,12 @@ public class GameContext {
         transitionTo(new ExploringState());
     }
 
-    public List<String> allowedVerbs() {
-    return state.availableCommands();
-    }
-
     public void syncState() {
-        if (!player.isAlive() || !running) {
+        if (state.isTerminal()) {
+            return;
+        }
+
+        if (!player.isAlive()) {
             transitionTo(new GameOverState());
             return;
         }
@@ -100,5 +100,9 @@ public class GameContext {
         } else {
             transitionTo(new ExploringState());
         }
+    }
+
+    public List<String> allowedVerbs() {
+        return state.availableCommands();
     }
 }

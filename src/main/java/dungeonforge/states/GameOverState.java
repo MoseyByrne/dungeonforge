@@ -23,6 +23,11 @@ public class GameOverState implements GameState {
     }
 
     @Override
+    public boolean isTerminal() {
+        return true;
+    }
+
+    @Override
     public String name() {
         return "game over";
     }
