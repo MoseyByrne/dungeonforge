@@ -8,7 +8,7 @@ import java.util.List;
 public class CombatState implements GameState {
 
     private static final List<String> VERBS = List.of(
-            "attack", "use", "look", "inventory",
+            "attack", "use", "equip", "look", "inventory",
             "status", "history", "undo", "help", "quit"
     );
 

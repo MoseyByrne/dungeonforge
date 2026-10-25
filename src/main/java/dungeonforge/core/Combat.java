@@ -103,6 +103,15 @@ public class Combat {
         bus.publish(GameEvent.of(EventType.DAMAGE_DEALT,
                 "target", target.getName(), "amount", damage));
 
+        // WEEK 9 (PROVIDED) -- ONE line, and it covers every enchantment that will ever exist,
+        // because Combat never learns their names. It asks the player; the player asks the
+        // weapon; the weapon asks whatever it wraps. Nothing here changes in Part C.
+        int drained = player.lifesteal();
+        if (drained > 0) {
+            player.heal(drained);
+            bus.publish(GameEvent.of(EventType.PLAYER_HEALED, "amount", drained));
+        }
+
         if (!target.isAlive()) {
             target.setState(new DeadState());
             player.addXp(target.getXpReward());

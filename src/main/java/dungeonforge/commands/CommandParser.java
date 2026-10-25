@@ -74,6 +74,10 @@ public class CommandParser {
         register("north", (c, a) -> new MoveCommand(c, "north"));
         register("south", (c, a) -> new MoveCommand(c, "south"));
         register("down",  (c, a) -> new MoveCommand(c, "down"));
+        // WEEK 9 (PROVIDED) -- equipment and enchantment commands.
+        register("equip", EquipCommand::new);
+        alias("e", "equip");
+        register("enchant", EnchantCommand::new);
         alias("n", "north");
         alias("s", "south");
         alias("d", "down");
