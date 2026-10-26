@@ -20,6 +20,7 @@ import dungeonforge.items.FlamingWeapon;
 import dungeonforge.items.FrostWeapon;
 import dungeonforge.items.VampiricWeapon;
 import dungeonforge.items.Weapon;
+import dungeonforge.items.KeenWeapon;
 import dungeonforge.states.HuntingState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -189,5 +190,42 @@ class DecoratorTest {
         assertTrue(player.getHp() > before - 12,
                 "lifesteal must offset some of the counter-attack; got " + player.getHp());
         assertTrue(m.getHp() < 200);
+    }
+    @Test
+    void keenMultipliesWhereTheOthersAdd() {
+        assertEquals(12, new KeenWeapon(sword()).getDamage(),
+                "round(8 * 1.5)");
+    }
+
+    @Test
+    void theFourthEnchantmentNeededNoChangeToTheOtherThree() {
+        assertEquals(12, new FlamingWeapon(sword()).getDamage());
+        assertEquals(11, new FrostWeapon(sword()).getDamage());
+        assertEquals(4, EnchantmentRegistry.known().size());
+        assertTrue(EnchantmentRegistry.known().contains("keen"));
+    }
+    @Test
+    void orderChangesTheResultForMultiplyingDecorators() {
+        int keenThenFire =
+                new FlamingWeapon(new KeenWeapon(sword())).getDamage();
+        int fireThenKeen =
+                new KeenWeapon(new FlamingWeapon(sword())).getDamage();
+
+        assertEquals(16, keenThenFire); // (8 * 1.5) + 4
+        assertEquals(18, fireThenKeen); // (8 + 4) * 1.5
+        assertNotEquals(keenThenFire, fireThenKeen);
+    }
+
+    @Test
+    void orderChangesHowMuchAVampiricWeaponDrinks() {
+        assertEquals(3,
+                new VampiricWeapon(new FlamingWeapon(sword())).lifesteal());
+        assertEquals(2,
+                new FlamingWeapon(new VampiricWeapon(sword())).lifesteal());
+    }
+    @Test
+    void twoVampiricLayersDrinkTwice() {
+        assertEquals(4,
+                new VampiricWeapon(new VampiricWeapon(sword())).lifesteal());
     }
 }

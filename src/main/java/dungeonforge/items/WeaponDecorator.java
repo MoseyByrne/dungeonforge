@@ -47,4 +47,7 @@ public abstract class WeaponDecorator implements Weapon {
                 + " (" + String.format("%.1f", getWeight())
                 + "kg, " + getValue() + "g)";
     }
+    public Weapon unwrap() {
+        return wrapped;
+    }
 }
