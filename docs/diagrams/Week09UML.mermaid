@@ -1,0 +1,639 @@
+classDiagram
+    direction TB
+%% Week 9: every production type; key members and architectural relationships.
+%% Collection generic arguments are abbreviated where necessary.
+    namespace Decorator {
+        class Weapon {
+            <<interface>>
+            +getDamage() int
+            +lifesteal() int
+        }
+        class BasicWeapon {
+            #String name
+            #double weight
+            #int value
+            #int damage
+            +BasicWeapon(String name, double weight, int value, int damage)
+            +getDamage() int
+            +lifesteal() int
+            +describe() String
+        }
+        class WeaponDecorator {
+            <<abstract>>
+            #Weapon wrapped
+            #WeaponDecorator(Weapon wrapped)
+            #prefix() String*
+            #valueBonus() int*
+            +getName() String
+            +getWeight() double
+            +getValue() int
+            +getDamage() int
+            +lifesteal() int
+            +describe() String
+            +unwrap() Weapon
+        }
+        class FlamingWeapon {
+            -int FIRE_BONUS$
+            +FlamingWeapon(Weapon wrapped)
+            +getDamage() int
+            #prefix() String
+            #valueBonus() int
+        }
+        class FrostWeapon {
+            -int FROST_BONUS$
+            +FrostWeapon(Weapon wrapped)
+            +getDamage() int
+            #prefix() String
+            #valueBonus() int
+        }
+        class VampiricWeapon {
+            +VampiricWeapon(Weapon wrapped)
+            +lifesteal() int
+            #prefix() String
+            #valueBonus() int
+        }
+        class KeenWeapon {
+            -double EDGE$
+            +KeenWeapon(Weapon wrapped)
+            +getDamage() int
+            #prefix() String
+            #valueBonus() int
+        }
+        class EnchantmentRegistry {
+            -Map SPELLS$
+            +known() List~String~$
+            +isKnown(String enchantment) boolean$
+            +apply(String enchantment, Weapon weapon) Weapon$
+        }
+    }
+    namespace Command {
+        class Command {
+            <<interface>>
+            +execute() void
+            +undo() void
+            +getDescription() String
+            +isUndoable() boolean
+            +endsTurn() boolean
+        }
+        class AbstractCommand {
+            <<abstract>>
+            #GameContext ctx
+            #String args
+            -TurnSnapshot before
+            -boolean actuallyRan
+            +execute() void
+            #doExecute() boolean*
+            +undo() void
+            +isUndoable() boolean
+            +didRun() boolean
+        }
+        class AttackCommand {
+        }
+        class MoveCommand {
+        }
+        class TakeCommand {
+        }
+        class DropCommand {
+        }
+        class UseItemCommand {
+        }
+        class EquipCommand {
+            #doExecute() boolean
+        }
+        class EnchantCommand {
+            -Weapon before
+            -Weapon after
+            -boolean wasEquipped
+            #doExecute() boolean
+        }
+        class MacroCommand {
+            -List~Command~ children
+            +execute() void
+            +undo() void
+            +endsTurn() boolean
+            +size() int
+        }
+        class SimpleCommand {
+            -Body body
+            +execute() void
+            +isUndoable() boolean
+            +endsTurn() boolean
+        }
+        class NoCommand {
+            -String reason
+            +execute() void
+            +isUndoable() boolean
+            +endsTurn() boolean
+        }
+        class CommandFactory {
+            <<interface>>
+            +create(GameContext ctx, String args) Command
+        }
+        class CommandParser {
+            -Map registry
+            -Map aliases
+            +register(String verb, CommandFactory factory) void
+            +alias(String shortForm, String verb) void
+            +verbs() List~String~
+            +parse(String input, GameContext ctx) Command
+        }
+        class CommandHistory {
+            -Deque~Command~ undoStack
+            -List~String~ replayLog
+            +push(Command command) void
+            +undoLast() boolean
+            +depth() int
+            +clear() void
+        }
+        class SimpleCommand_Body {
+            <<interface>>
+            +run() void
+        }
+    }
+    namespace Memento {
+        class TurnSnapshot {
+            -Player player
+            -Room room
+            -int hp
+            -int gold
+            -int xp
+            -List~Item~ inventory
+            -Weapon equipped
+            -List~Monster~ monsters
+            -List~Item~ floorItems
+            -List~Item~ chestContents
+            -Map monsterHp
+            -Map monsterStrategies
+            -Map monsterStates
+            +capture(Player player, Room room) TurnSnapshot$
+            +restore() void
+        }
+    }
+    namespace State_Game {
+        class GameState {
+            <<interface>>
+            +onEnter(GameContext ctx) void
+            +onExit(GameContext ctx) void
+            +isTerminal() boolean
+            +availableCommands() List~String~
+            +name() String
+        }
+        class ExploringState {
+        }
+        class CombatState {
+        }
+        class InventoryState {
+        }
+        class GameOverState {
+            +onEnter(GameContext ctx) void
+            +isTerminal() boolean
+            +availableCommands() List~String~
+        }
+    }
+    namespace State_Monster {
+        class MonsterState {
+            <<interface>>
+            +onEnter(Monster self) void
+            +canAct() boolean
+            +damageMultiplier() double
+            +next(Monster self, Player player) MonsterState
+            +label() String
+        }
+        class IdleState {
+        }
+        class HuntingState {
+        }
+        class EnragedState {
+            +double DAMAGE_BONUS$
+            +onEnter(Monster self) void
+            +damageMultiplier() double
+        }
+        class FleeingState {
+            +double DAMAGE_DEFICIT$
+            +onEnter(Monster self) void
+            +damageMultiplier() double
+        }
+        class DeadState {
+        }
+    }
+    namespace Strategy {
+        class CombatStrategy {
+            <<interface>>
+            +chooseAction(Monster self, Player target, Room room) Action
+            +name() String
+        }
+        class AggressiveStrategy {
+        }
+        class RangedStrategy {
+        }
+        class SkittishStrategy {
+        }
+        class HealerStrategy {
+        }
+        class Action {
+            -Type type
+            -Entity target
+            -String flavor
+            +getType() Type
+            +getTarget() Entity
+            +wait(String flavor) Action$
+        }
+        class Action_Type {
+            <<enumeration>>
+            ATTACK
+            RANGED_ATTACK
+            FLEE
+            HEAL_ALLY
+            WAIT
+        }
+    }
+    namespace Observer {
+        class GameEventListener {
+            <<interface>>
+            +onEvent(GameEvent event) void
+        }
+        class EventBus {
+            -List~GameEventListener~ listeners
+            +subscribe(GameEventListener listener) void
+            +unsubscribe(GameEventListener listener) void
+            +publish(GameEvent event) void
+            +message(String text) void
+        }
+        class GameEvent {
+            -EventType type
+            -Map payload
+            +of(EventType type, Object[] keyValuePairs) GameEvent$
+            +message(String text) GameEvent$
+            +getType() EventType
+            +get(String key) Object
+        }
+        class EventType {
+            <<enumeration>>
+        }
+        class CombatLog {
+            -Deque~String~ lines
+            +onEvent(GameEvent event) void
+            +getLines() List~String~
+        }
+        class QuestTracker {
+            -List~Quest~ quests
+            +onEvent(GameEvent event) void
+            +getQuests() List~Quest~
+            +completedCount() int
+        }
+        class Quest {
+            -EventType trigger
+            -int required
+            -int progress
+            +advance() boolean
+            +isComplete() boolean
+        }
+        class AchievementSystem {
+            -Set~String~ unlocked
+            +onEvent(GameEvent event) void
+            +getUnlocked() Set~String~
+        }
+        class DangerMeter {
+            -Player player
+            -int damageThreshold
+            +onEvent(GameEvent event) void
+        }
+    }
+    namespace Abstract_Factory {
+        class ThemeKit {
+            <<interface>>
+            +themeName() String
+            +createMonster(int depth) Monster
+            +createBoss(int depth) Monster
+            +createLoot(int depth) Item
+            +createRoomFlavor() String
+        }
+        class CryptThemeKit {
+        }
+        class ForgeThemeKit {
+        }
+        class FrostThemeKit {
+        }
+        class WinterfellThemeKit {
+        }
+        class ThemeRegistry {
+            -List~ThemeKit~ kits
+            +forDepth(int depth) ThemeKit
+            +themeNames() List~String~
+        }
+    }
+    namespace Factory_Method {
+        class RoomPopulator {
+            <<abstract>>
+            #ThemeKit theme
+            +populate(Room room, int depth) void
+            #createEncounter(int depth) List~Monster~*
+            #createChest(int depth) Chest
+            +kind() String*
+        }
+        class StandardRoomPopulator {
+        }
+        class TreasureRoomPopulator {
+        }
+        class BossRoomPopulator {
+        }
+    }
+    namespace Simple_Factory {
+        class MonsterFactory {
+            -Map blueprints
+            +register(MonsterDef def) void
+            +create(String id, int depth) Monster
+            +strategyFor(String name) CombatStrategy$
+        }
+        class MonsterDef {
+            +String id
+            +String name
+            +int hp
+            +int attack
+            +int xp
+            +String theme
+            +boolean boss
+            +String strategy
+        }
+    }
+    namespace Singleton {
+        class GameConfig {
+            -GameConfig instance$
+            -Map settings
+            -GameConfig()
+            +getInstance() GameConfig$
+            +getInt(String key) int
+            +getDouble(String key) double
+            +getSeed() long
+        }
+        class RandomSource {
+            -RandomSource instance$
+            -Random rng
+            -long seed
+            -RandomSource()
+            +getInstance() RandomSource$
+            +nextInt(int bound) int
+            +between(int lo, int hi) int
+            +nextDouble() double
+            +reseed(long newSeed) void
+        }
+    }
+    namespace Core {
+        class Entity {
+            <<abstract>>
+            #String name
+            #int hp
+            #int maxHp
+            #int attackPower
+            #int defense
+            +getAttackPower() int
+            +isAlive() boolean
+            +takeDamage(int amount) void
+            +heal(int amount) void
+            +describe() String*
+        }
+        class Player {
+            -List~Item~ inventory
+            -Weapon equippedWeapon
+            -int gold
+            -int xp
+            +equip(Weapon w) Weapon
+            +unequip() Weapon
+            +getEquippedWeapon() Weapon
+            +getAttackPower() int
+            +lifesteal() int
+            +findItem(String query) Item
+        }
+        class Monster {
+            -CombatStrategy strategy
+            -MonsterState state
+            +setStrategy(CombatStrategy strategy) void
+            +setState(MonsterState next) void
+            +restoreState(MonsterState previous) void
+            +hpFraction() double
+        }
+        class Room {
+            -List~Monster~ monsters
+            -List~Item~ floorItems
+            -Chest chest
+            -Map exits
+            +link(String direction, Room to) void
+            +hasLivingMonsters() boolean
+        }
+        class DungeonLevel {
+            -int depth
+            -String themeName
+            -List~Room~ rooms
+            +addRoom(Room r) void
+        }
+        class GameWorld {
+            -Player player
+            -List~DungeonLevel~ levels
+            -MonsterFactory monsterFactory
+            -ThemeRegistry themes
+            +startingRoom() Room
+            -generate() void
+            -populatorFor(ThemeKit theme, boolean isFinalRoom) RoomPopulator
+        }
+        class Combat {
+            -EventBus bus
+            +monsterTurns(Player player, Room room) void
+            +playerStrikes(Player player, Monster target) void
+            +restAfterRoom(Player player) void$
+        }
+        class GameContext {
+            -GameWorld world
+            -Player player
+            -EventBus bus
+            -Combat combat
+            -CommandHistory history
+            -Room currentRoom
+            -GameState state
+            -boolean running
+            +transitionTo(GameState next) void
+            +syncState() void
+            +allowedVerbs() List~String~
+            +runMonsterTurns() void
+            +isRunning() boolean
+            +stop() void
+        }
+    }
+    namespace Items {
+        class Item {
+            <<interface>>
+            +getName() String
+            +getWeight() double
+            +getValue() int
+            +describe() String
+        }
+        class Armor {
+            -int defense
+            +getDefense() int
+        }
+        class Potion {
+            -int healAmount
+            +getHealAmount() int
+        }
+        class Treasure {
+        }
+        class Hourglass {
+            -int charges
+            +hasCharges() boolean
+            +spendCharge() void
+        }
+        class Chest {
+            -List~Item~ contents
+            +add(Item item) void
+            +getContents() List~Item~
+            +totalValue() int
+        }
+    }
+    namespace Application {
+        class Main {
+            +String VERSION$
+            +main(String[] args) void$
+            +banner() String$
+        }
+        class Json {
+            +parseObject(String text) Map$
+        }
+        class Main_ConsolePrinter {
+            +onEvent(GameEvent event) void
+        }
+    }
+    Command <|.. AbstractCommand
+    GameEventListener <|.. AchievementSystem
+    CombatStrategy <|.. AggressiveStrategy
+    Item <|.. Armor
+    AbstractCommand <|-- AttackCommand
+    Weapon <|.. BasicWeapon
+    RoomPopulator <|-- BossRoomPopulator
+    GameEventListener <|.. CombatLog
+    GameState <|.. CombatState
+    ThemeKit <|.. CryptThemeKit
+    GameEventListener <|.. DangerMeter
+    MonsterState <|.. DeadState
+    AbstractCommand <|-- DropCommand
+    AbstractCommand <|-- EnchantCommand
+    MonsterState <|.. EnragedState
+    AbstractCommand <|-- EquipCommand
+    GameState <|.. ExploringState
+    WeaponDecorator <|-- FlamingWeapon
+    MonsterState <|.. FleeingState
+    ThemeKit <|.. ForgeThemeKit
+    ThemeKit <|.. FrostThemeKit
+    WeaponDecorator <|-- FrostWeapon
+    GameState <|.. GameOverState
+    CombatStrategy <|.. HealerStrategy
+    Item <|.. Hourglass
+    MonsterState <|.. HuntingState
+    MonsterState <|.. IdleState
+    GameState <|.. InventoryState
+    WeaponDecorator <|-- KeenWeapon
+    Command <|.. MacroCommand
+    Entity <|-- Monster
+    AbstractCommand <|-- MoveCommand
+    Command <|.. NoCommand
+    Entity <|-- Player
+    Item <|.. Potion
+    GameEventListener <|.. QuestTracker
+    CombatStrategy <|.. RangedStrategy
+    Command <|.. SimpleCommand
+    CombatStrategy <|.. SkittishStrategy
+    RoomPopulator <|-- StandardRoomPopulator
+    AbstractCommand <|-- TakeCommand
+    Item <|.. Treasure
+    RoomPopulator <|-- TreasureRoomPopulator
+    AbstractCommand <|-- UseItemCommand
+    WeaponDecorator <|-- VampiricWeapon
+    Item <|-- Weapon
+    Weapon <|.. WeaponDecorator
+    ThemeKit <|.. WinterfellThemeKit
+    GameEventListener <|.. Main_ConsolePrinter
+    WeaponDecorator --> "1" Weapon : wrapped
+    EnchantmentRegistry ..> Weapon : accepts and returns
+    EnchantmentRegistry ..> FlamingWeapon : constructs
+    EnchantmentRegistry ..> FrostWeapon : constructs
+    EnchantmentRegistry ..> VampiricWeapon : constructs
+    EnchantmentRegistry ..> KeenWeapon : constructs
+    EnchantCommand ..> EnchantmentRegistry : applies
+    EnchantCommand --> Weapon : before and after
+    Player --> "0..1" Weapon : equippedWeapon
+    Player --> "0..*" Item : inventory
+    AbstractCommand --> GameContext : ctx
+    AbstractCommand *-- "0..1" TurnSnapshot : before
+    CommandHistory --> "0..*" Command : undoStack
+    MacroCommand --> "0..*" Command : children
+    SimpleCommand --> SimpleCommand_Body : body
+    CommandParser --> "0..*" CommandFactory : registry
+    CommandFactory ..> Command : creates
+    CommandParser --> QuestTracker
+    CommandParser --> AchievementSystem
+    CommandParser ..> MacroCommand : builds loot
+    TurnSnapshot --> Player : restores
+    TurnSnapshot --> Room : restores
+    TurnSnapshot --> "0..1" Weapon : equipped snapshot
+    TurnSnapshot --> MonsterState : saved states
+    TurnSnapshot --> CombatStrategy : saved strategies
+    GameContext --> GameState : current mode
+    GameContext --> GameWorld
+    GameContext --> Player
+    GameContext --> Room : currentRoom
+    GameContext --> EventBus
+    GameContext --> Combat
+    GameContext --> CommandHistory
+    Monster --> MonsterState : lifecycle
+    Monster --> CombatStrategy : tactics
+    CombatStrategy ..> Action : chooses
+    Action --> Action_Type : type
+    Action --> Entity : target
+    EventBus --> "0..*" GameEventListener : subscribers
+    EventBus ..> GameEvent : publishes
+    GameEventListener ..> GameEvent : receives
+    GameEvent --> EventType : type
+    QuestTracker *-- "0..*" Quest : quests
+    Quest --> EventType : trigger
+    AchievementSystem --> EventBus
+    QuestTracker --> EventBus
+    DangerMeter --> EventBus
+    DangerMeter --> Player
+    Main_ConsolePrinter *-- CombatLog : formatter
+    ThemeRegistry --> "0..*" ThemeKit : kits
+    CryptThemeKit --> MonsterFactory
+    ForgeThemeKit --> MonsterFactory
+    FrostThemeKit --> MonsterFactory
+    WinterfellThemeKit --> MonsterFactory
+    ThemeKit ..> Monster : creates
+    ThemeKit ..> Item : creates
+    RoomPopulator --> ThemeKit : theme
+    RoomPopulator ..> Room : populates
+    RoomPopulator ..> Monster : creates encounter
+    RoomPopulator ..> Chest : creates
+    MonsterFactory --> "0..*" MonsterDef : blueprints
+    MonsterFactory ..> Monster : creates
+    MonsterFactory ..> CombatStrategy : selects
+    GameWorld *-- "1..*" DungeonLevel : levels
+    DungeonLevel --> "0..*" Room : rooms
+    GameWorld --> Player
+    GameWorld *-- MonsterFactory
+    GameWorld *-- ThemeRegistry
+    GameWorld ..> RoomPopulator : selects
+    Room --> "0..*" Monster : monsters
+    Room --> "0..*" Item : floorItems
+    Room --> "0..1" Chest : chest
+    Room --> "0..*" Room : exits
+    Chest --> "0..*" Item : contents
+    Combat --> EventBus
+    Combat ..> Player : damage and lifesteal
+    Combat ..> Monster : state and strategy
+    Combat ..> Action : executes
+    RandomSource ..> GameConfig : seed
+    GameConfig ..> Json : reads settings
+    MonsterFactory ..> GameConfig : reads data
+    MonsterFactory ..> Json : parses data
+    UseItemCommand ..> Hourglass
+    UseItemCommand ..> CommandHistory : rewinds
+    EquipCommand ..> Player : equips weapon
+    Main ..> GameContext
+    Main ..> CommandParser
+    Main ..> Main_ConsolePrinter
