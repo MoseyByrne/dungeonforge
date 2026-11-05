@@ -10,7 +10,6 @@ public class TakeCommand extends AbstractCommand {
 
     @Override
     protected boolean doExecute() {
-
         Item found = takeFromFloor();
         if (found == null) found = takeFromChest();
 

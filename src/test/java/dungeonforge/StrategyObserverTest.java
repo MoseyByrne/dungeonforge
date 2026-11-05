@@ -265,3 +265,4 @@ class StrategyObserverTest {
                 m.getStrategy().chooseAction(m, new Player("P"), new Room("r")).getType());
     }
 }
+

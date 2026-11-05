@@ -1,6 +1,7 @@
 package dungeonforge.core;
 
 import dungeonforge.behavior.CombatStrategy;
+import dungeonforge.config.RandomSource;
 import dungeonforge.states.IdleState;
 import dungeonforge.states.MonsterState;
 
@@ -20,8 +21,16 @@ public class Monster extends Entity {
     private final int xpReward;
     private CombatStrategy strategy;
 
-    // WEEK 8: the monster's lifecycle is represented by a state object.
-    private MonsterState state = new IdleState();
+    /**
+     * TODO(week 8, US-6.3): a monster's LIFECYCLE, stored as a string.
+     *
+     * "idle" -> "hunting" -> "enraged" -> "fleeing" -> "dead"
+     *
+     * This is exactly how the Gumball Machine starts in Chapter 10 of your textbook: a field
+     * holding the current state, and conditionals about that field scattered through every
+     * method that cares. Grep Combat.java for getStateName() before you start, and count.
+     */
+    private MonsterState stateName = new IdleState();
 
     /**
      * WEEK 5 correction: stat variance used to be rolled here AND again in MonsterFactory,
@@ -42,20 +51,19 @@ public class Monster extends Entity {
     public CombatStrategy getStrategy()              { return strategy; }
     public void setStrategy(CombatStrategy strategy) { this.strategy = strategy; }
 
-    public MonsterState getState() {
-        return state;
-    }
+    public MonsterState getState()          { return stateName; }
 
     public void setState(MonsterState next) {
-        this.state = next;
+        if (next == null || next == this.stateName) return;
+        this.stateName = next;
         next.onEnter(this);
     }
 
     /**
-     * Used only by TurnSnapshot to restore state without running entry hooks.
-     */
+    * Only TurnSnapshot should call this. Anything else is a transition and belongs above.
+    */
     public void restoreState(MonsterState previous) {
-        this.state = previous;
+        if (previous != null) this.stateName = previous;
     }
 
     /** How close to death, as a fraction. Strategies read this to decide whether to run. */
@@ -64,6 +72,6 @@ public class Monster extends Entity {
     @Override
     public String describe() {
         return species + " (" + hp + "/" + maxHp + " HP, ATK " + attackPower
-                + ", " + state.label() + ")";
+                + ", " + stateName.label() + ")";
     }
 }
