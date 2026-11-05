@@ -1,43 +1,27 @@
 package dungeonforge.states;
 
 import dungeonforge.commands.GameContext;
-import dungeonforge.events.GameEvent;
 
 import java.util.List;
 
 public class CombatState implements GameState {
+    private final static List<String> VERBS = List.of(
+            "attack", "look", "use", "equip", "inventory", "status", "history", "undo", "help", "quit");
 
-    private static final List<String> VERBS = List.of(
-            "attack", "use", "equip", "look", "inventory",
-            "status", "history", "undo", "help", "quit"
-    );
 
     @Override
     public void onEnter(GameContext ctx) {
-        long hostiles = ctx.getCurrentRoom().getMonsters()
-                .stream()
-                .filter(monster -> monster.isAlive())
-                .count();
-
-        ctx.getBus().publish(GameEvent.message(
-                "Combat: " + hostiles + " hostiles. Try attack."
-        ));
+        int count = ctx.getCurrentRoom().getMonsters().size();
+        ctx.getBus().message("Combat! " + count + " hostile(s). Try 'attack'.");
     }
 
     @Override
     public void onExit(GameContext ctx) {
-        ctx.getBus().publish(GameEvent.message(
-                "The room falls quiet."
-        ));
+        ctx.getBus().message("The room falls quiet.");
     }
 
-    @Override
-    public List<String> availableCommands() {
+    @Override public List<String> availableCommands() {
         return VERBS;
     }
-
-    @Override
-    public String name() {
-        return "combat";
-    }
+    @Override public String name() { return "Combat"; }
 }

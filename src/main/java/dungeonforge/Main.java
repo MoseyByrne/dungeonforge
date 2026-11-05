@@ -40,7 +40,7 @@ import java.util.List;
  */
 public final class Main {
 
-    public static final String VERSION = "0.9.0";
+    public static final String VERSION = "0.10.0";
 
     private Main() { }
 
@@ -55,9 +55,13 @@ public final class Main {
     public static void main(String[] args) throws Exception {
         String name = "Delver";
         String script = null;
+        boolean report = false;
         for (String a : args) {
             if (a.startsWith("--seed="))        RandomSource.getInstance().reseed(Long.parseLong(a.substring(7).trim()));
             else if (a.startsWith("--script=")) script = a.substring(9).trim();
+            // WEEK 10 (PROVIDED) -- a bare boolean flag, in the same hand-rolled style as the
+            // two above. Prints the per-level invariant table and exits.
+            else if (a.equals("--report"))      report = true;
             else if (!a.startsWith("--"))       name = a;
         }
 
@@ -68,10 +72,18 @@ public final class Main {
         Player player = new Player(name);
         player.addItem(new Potion("Small Healing Draught", 0.3, 20, 22));
         player.addItem(new Hourglass(2));                 // US-5.4
-        // WEEK 9 (PROVIDED) -- starter weapon for the enchantment exercises.
-        player.addItem(new dungeonforge.items.BasicWeapon(
-                "Notched Shortsword", 2.5, 25, 5));
+        // WEEK 9 (PROVIDED) -- a plain weapon to start with, so the enchantment exercises in
+        // docs/evidence.md work on turn one instead of waiting on a loot drop.
+        player.addItem(new dungeonforge.items.BasicWeapon("Notched Shortsword", 2.5, 25, 5));
         GameWorld world = new GameWorld(player);
+
+        // WEEK 10 -- the diagnostic path. Prints the invariant table and exits before any of
+        // the game's wiring is built, because a diagnostic should need as little of the system
+        // as possible to run.
+        if (report) {
+            System.out.println(dungeonforge.core.DungeonReport.of(world));
+            return;
+        }
 
         EventBus bus = new EventBus();
         QuestTracker quests = new QuestTracker(bus);
@@ -88,7 +100,6 @@ public final class Main {
 
         bus.message("Type 'help' for what you can do. You are carrying an hourglass -- 'use hourglass' rewinds a turn.");
         parser.parse("look", ctx).execute();
-
         ctx.syncState();
 
         if (script != null) {
@@ -110,8 +121,7 @@ public final class Main {
 
         ctx.syncState();
         while (ctx.isRunning()) {
-            System.out.print("\n[" + ctx.getState().name()
-                    + " | HP " + ctx.getPlayer().getHp() + "/"
+            System.out.print("\n["+ctx.getState().name()+" | HP " + ctx.getPlayer().getHp() + "/"
                     + ctx.getPlayer().getMaxHp() + "] > ");
             System.out.flush();
 
@@ -143,7 +153,6 @@ public final class Main {
             Command command = parser.parse(line, ctx);
             command.execute();
             history.push(command);
-            ctx.syncState();
         }
     }
 

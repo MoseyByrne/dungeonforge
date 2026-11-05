@@ -63,9 +63,8 @@ public class CommandParser {
         }
         if (!ctx.allowedVerbs().contains(verb)) {
             return new NoCommand(ctx.getBus(),
-                    "You cannot do that in " + ctx.getState().name()
-                            + " mode.\n  Available here: "
-                            + String.join(", ", ctx.allowedVerbs()));
+                    "You cannot do that in " + ctx.getState().name() + " mode. " +
+                    "\n    Available here: " + String.join(", ", ctx.allowedVerbs()));
         }
         return factory.create(ctx, args);
     }
@@ -75,7 +74,20 @@ public class CommandParser {
         register("north", (c, a) -> new MoveCommand(c, "north"));
         register("south", (c, a) -> new MoveCommand(c, "south"));
         register("down",  (c, a) -> new MoveCommand(c, "down"));
-        // WEEK 9 (PROVIDED) -- equipment and enchantment commands.
+
+        // WEEK 10 (PROVIDED) -- two more compass directions, so a level shape can be something
+        // other than a line or a loop. Exits live in a Map keyed by direction name, so the set
+        // of legal direction words is also the limit on how many doors a room can have.
+        //
+        // NOTE, and it is the exact collision Week 7's evidence sheet predicted: "e" is already
+        // taken by `equip`, so east gets no short form. In an if/else chain that collision would
+        // have compiled silently and the earlier branch would have won. Here both claims on "e"
+        // would sit in one Map you can print, and the second would visibly overwrite the first.
+        register("east",  (c, a) -> new MoveCommand(c, "east"));
+        register("west",  (c, a) -> new MoveCommand(c, "west"));
+        alias("w", "west");
+
+        // WEEK 9 (PROVIDED) -- the whole wiring cost of two new verbs. Four lines.
         register("equip", EquipCommand::new);
         alias("e", "equip");
         register("enchant", EnchantCommand::new);
@@ -146,14 +158,13 @@ public class CommandParser {
         }));
 
         register("help", (c, a) -> new SimpleCommand("help",
-                () -> c.getBus().message(
-                        "[" + c.getState().name() + "] Available: "
-                                + String.join(", ", c.allowedVerbs()))));
+                () -> c.getBus().message("[" + c.getState().name() + "] you can: "
+                        + String.join(", ", c.allowedVerbs()))));
         alias("?", "help");
 
         register("pack", (c, a) -> new SimpleCommand("pack", c::openPack));
-
         register("back", (c, a) -> new SimpleCommand("back", c::closePack));
+
 
         register("quit", (c, a) -> new SimpleCommand("quit", () -> {
             c.getBus().message("You lay down your pack.");

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
-public final class EnchantmentRegistry {
+public class EnchantmentRegistry {
+    private static final Map<String, UnaryOperator<Weapon>> SPELLS = new LinkedHashMap<>();
 
-    private static final Map<String, UnaryOperator<Weapon>> SPELLS =
-            new LinkedHashMap<>();
+    private EnchantmentRegistry() {}
 
     static {
         SPELLS.put("flaming", FlamingWeapon::new);
@@ -18,24 +18,16 @@ public final class EnchantmentRegistry {
         SPELLS.put("keen", KeenWeapon::new);
     }
 
-    private EnchantmentRegistry() {}
-
-    public static List<String> known() {
-        return new ArrayList<>(SPELLS.keySet());
-    }
-
     public static boolean isKnown(String enchantment) {
         return enchantment != null && SPELLS.containsKey(enchantment);
     }
 
+    public static List<String> known() { return new ArrayList<>(SPELLS.keySet()); }
+
     public static Weapon apply(String enchantment, Weapon weapon) {
         UnaryOperator<Weapon> spell = SPELLS.get(enchantment);
-
-        if (spell == null) {
-            throw new IllegalArgumentException(
-                    "No such enchantment: " + enchantment);
-        }
-
+        if (spell == null) { throw new IllegalArgumentException("no such enchantment: " + enchantment); }
         return spell.apply(weapon);
     }
+
 }

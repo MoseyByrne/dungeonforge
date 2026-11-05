@@ -14,33 +14,19 @@ public class EnragedState implements MonsterState {
         self.setStrategy(new AggressiveStrategy());
     }
 
-    @Override
-    public boolean canAct() {
-        return true;
-    }
+    @Override public boolean canAct() { return true; }
 
-    @Override
-    public double damageMultiplier() {
-        return DAMAGE_BONUS;
-    }
+    @Override public double damageMultiplier() { return DAMAGE_BONUS; }
 
     @Override
     public MonsterState next(Monster self, Player player) {
-        if (!self.isAlive()) {
-            return new DeadState();
-        }
+        if(!self.isAlive()) return new DeadState();
 
         double flee = GameConfig.getInstance().getDouble("fleeThreshold");
-
-        if (self.hpFraction() < flee) {
-            return new FleeingState();
-        }
+        if (self.hpFraction() < flee) return new FleeingState();
 
         return this;
     }
 
-    @Override
-    public String label() {
-        return "enraged";
-    }
+    @Override public String label() { return "enraged"; }
 }

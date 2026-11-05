@@ -43,4 +43,3 @@ public class BasicWeapon implements Weapon {
         return name + " [dmg " + getDamage() + "] (" + String.format("%.1f", weight) + "kg, " + getValue() + "g)";
     }
 }
-

@@ -16,7 +16,6 @@ public class MoveCommand extends AbstractCommand {
 
     @Override
     protected boolean doExecute() {
-
         Room next = room().getExit(direction);
         if (next == null) {
             bus().message("There is no way " + direction + ".");
