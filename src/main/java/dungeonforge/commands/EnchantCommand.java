@@ -5,15 +5,11 @@ import dungeonforge.items.Item;
 import dungeonforge.items.Weapon;
 
 /**
- * WEEK 9 STARTER -- PART OF THE PROBLEM.
+ * Adds an enchantment by wrapping a weapon in a decorator.
  *
- * `enchant <weapon> with <enchantment>`
+ * Usage: {@code enchant <weapon> with <enchantment>}
  *
- * This command is honest about what it can do, which is not much. Read the three failure
- * messages below -- each one is a limitation of EnchantmentForge leaking into the player's
- * face. None of them is a rule anyone chose. They are all "we ran out of classes."
- *
- * US-7.2 makes every one of these messages impossible to reach.
+ * Replaces the inventory entry and updates the equipped weapon when necessary.
  */
 public class EnchantCommand extends AbstractCommand {
 
@@ -58,9 +54,7 @@ public class EnchantCommand extends AbstractCommand {
         if(wasEquipped) { player().equip(after);}
         bus().message("The " + w.getName() + " is now " + after.describe());
 
-        // KNOWN DEFECT (US-7.2). `result` is a DIFFERENT OBJECT. If the old weapon was the
-        // equipped one, the equipped slot still points at the unenchanted original, and the
-        // player's damage does not change. Equip, enchant, then check `status` and see.
+        // The inventory and equipped slot now reference the enchanted weapon.
         return true;
     }
 

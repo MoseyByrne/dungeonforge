@@ -38,7 +38,10 @@ public abstract class WeaponDecorator implements Weapon {
         return wrapped.getValue() + valueBonus();
     }
 
-    public Weapon unwrap() { return wrapped; }
+    @Override
+    public Weapon peel() {
+        return wrapped;
+    }
 
     @Override
     public String describe() {

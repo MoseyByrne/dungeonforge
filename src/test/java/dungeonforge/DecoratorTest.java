@@ -230,4 +230,76 @@ class DecoratorTest {
                 "lifesteal must offset some of the counter-attack; got " + player.getHp());
         assertTrue(m.getHp() < 200);
     }
+    // ================= US-7.5: remove the outer enchantment =================
+
+    @Test
+    void plainWeaponPeelsToItself() {
+        Weapon plain = sword();
+        assertSame(plain, plain.peel());
+    }
+
+    @Test
+    void decoratorPeelsToTheExactWrappedWeapon() {
+        Weapon plain = sword();
+        Weapon frosted = new FrostWeapon(plain);
+        assertSame(plain, frosted.peel());
+    }
+
+    @Test
+    void disenchantRemovesOnlyTheOutermostLayer() {
+        player.addItem(new FlamingWeapon(new FrostWeapon(sword())));
+
+        run("disenchant sword");
+
+        Weapon remaining = (Weapon) player.findItem("sword");
+        assertEquals("Frost Iron Sword", remaining.getName());
+        assertEquals(11, remaining.getDamage());
+    }
+
+    @Test
+    void repeatedDisenchantsNeverExposeFlamingWithoutFrost() {
+        player.addItem(new FlamingWeapon(new FrostWeapon(sword())));
+
+        // Check the result that NEVER appears: peeling cannot remove
+        // the inner Frost layer while keeping the outer Flaming layer.
+        for (String expected : new String[]{
+                "Frost Iron Sword", "Iron Sword", "Iron Sword"}) {
+            run("disenchant sword");
+            Weapon remaining = (Weapon) player.findItem("sword");
+            assertEquals(expected, remaining.getName());
+            assertNotEquals("Flaming Iron Sword", remaining.getName());
+        }
+
+        assertEquals(8, ((Weapon) player.findItem("sword")).getDamage());
+    }
+
+    @Test
+    void disenchantUpdatesTheEquippedWeaponImmediately() {
+        Weapon plain = sword();
+        player.addItem(new FlamingWeapon(plain));
+        run("equip sword");
+        int enchantedAttack = player.getAttackPower();
+
+        run("disenchant sword");
+
+        assertSame(plain, player.getEquippedWeapon());
+        assertSame(plain, player.findItem("sword"));
+        assertEquals(enchantedAttack - 4, player.getAttackPower());
+    }
+
+    @Test
+    void undoDisenchantRestoresInventoryAndEquippedWeapon() {
+        Weapon enchanted = new FlamingWeapon(new FrostWeapon(sword()));
+        player.addItem(enchanted);
+        run("equip sword");
+
+        run("disenchant sword");
+        assertNotSame(enchanted, player.getEquippedWeapon());
+
+        assertTrue(history.undoLast());
+        assertSame(enchanted, player.getEquippedWeapon());
+        assertSame(enchanted, player.findItem("sword"));
+        assertEquals(1, player.getInventory().size());
+        assertEquals(15, player.getEquippedWeapon().getDamage());
+    }
 }
