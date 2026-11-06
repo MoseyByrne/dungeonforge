@@ -1,9 +1,9 @@
 package dungeonforge.items;
 
 /**
- * WEEK 9 STARTER -- a weapon that burns. One enchantment.
+ * Flaming decorator -- a weapon that burns.
  *
- * PART OF THE PROBLEM. Do not improve this class. Count it.
+ * Adds 4 damage and 60 gold in value to the wrapped weapon.
  */
 public class FlamingWeapon extends WeaponDecorator {
 

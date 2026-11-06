@@ -1,16 +1,10 @@
 package dungeonforge.items;
 
 /**
- * WEEK 4 -- a weapon.
- * WEEK 9 STARTER -- and the root of this week's problem.
+ * The concrete component in the weapon decorator design.
  *
- * Nothing is wrong with THIS class. The problem is the seven classes that extend it.
- * Open FlamingFrostVampiricWeapon and count how many times the fire arithmetic appears in
- * this package. Then work out what a FOURTH enchantment would cost.
- *
- * Two changes were needed to make the subclasses below possible, and both are dominoes:
- * the fields went from private to protected, and getDamage()/getValue()/describe() stopped
- * being things only this class decides.
+ * Stores a weapon's base name, weight, value, and damage.
+ * Enchantment decorators wrap this object to add their effects.
  */
 public class BasicWeapon implements Weapon {
 
@@ -33,8 +27,7 @@ public class BasicWeapon implements Weapon {
     public int getDamage() { return damage; }
 
     /**
-     * WEEK 9 STARTER -- hit points restored to the wielder when this weapon lands a blow.
-     * Zero for an ordinary weapon. Combat calls this after every player strike.
+     * A basic weapon restores no hit points when it strikes.
      */
     public int lifesteal() { return 0; }
 

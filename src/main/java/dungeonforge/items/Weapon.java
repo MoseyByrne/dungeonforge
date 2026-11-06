@@ -1,24 +1,22 @@
 package dungeonforge.items;
 
 /**
- * WEEK 4 -- a weapon.
- * WEEK 9 STARTER -- and the root of this week's problem.
+ * The shared interface for basic weapons and enchanted weapons.
  *
- * Nothing is wrong with THIS class. The problem is the seven classes that extend it.
- * Open FlamingFrostVampiricWeapon and count how many times the fire arithmetic appears in
- * this package. Then work out what a FOURTH enchantment would cost.
- *
- * Two changes were needed to make the subclasses below possible, and both are dominoes:
- * the fields went from private to protected, and getDamage()/getValue()/describe() stopped
- * being things only this class decides.
+ * Callers use the same operations regardless of how many decorators
+ * wrap a weapon. Peeling an undecorated weapon returns the weapon itself.
  */
 public interface Weapon extends Item {
 
     int getDamage();
 
     /**
-     * WEEK 9 STARTER -- hit points restored to the wielder when this weapon lands a blow.
-     * Zero for an ordinary weapon. Combat calls this after every player strike.
+     * Hit points restored to the wielder when this weapon lands a blow.
+     * Defaults to zero for weapons without lifesteal.
      */
     default int lifesteal() { return 0; }
+
+    default Weapon peel() {
+        return this;
+    }
 }

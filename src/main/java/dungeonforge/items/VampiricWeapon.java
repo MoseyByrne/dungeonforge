@@ -1,9 +1,11 @@
 package dungeonforge.items;
 
 /**
- * WEEK 9 STARTER -- a weapon that burns. One enchantment.
+ * Vampiric enchantment decorator.
  *
- * PART OF THE PROBLEM. Do not improve this class. Count it.
+ * Adds lifesteal equal to one quarter of the wrapped weapon's damage,
+ * rounded down with a minimum of 1, while preserving existing lifesteal.
+ * Adds 90 gold in value.
  */
 public class VampiricWeapon extends WeaponDecorator {
 

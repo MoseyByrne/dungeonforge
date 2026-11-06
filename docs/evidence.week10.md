@@ -14,16 +14,17 @@ grep -rn 'unwrap' src/ | grep -v 'public Weapon unwrap'
 grep -rl 'WEEK 9 STARTER' src/main/java | wc -l
 ```
 
-**Paste the output of the first command.** How many callers does `unwrap()` have? ______
+**Paste the output of the first command.** How many callers does `unwrap()` have? __0____
 
-**And its javadoc says it is "used by undo". Open `TurnSnapshot.java`. Is it?** ______
+**And its javadoc says it is "used by undo". Open `TurnSnapshot.java`. Is it?** ___no___
 
 **One sentence on why dead code with a comment vouching for it is worse than dead code.**
+>The misleading comment makes unused code look necessary, so someone maintaining the project may trust it and leave it in place.
 
 
-**The second command prints a number.** ______ Open any one of those files and read its header.
+**The second command prints a number.** __10____ Open any one of those files and read its header.
 **Name one sentence in it that is no longer true, and say what made it stop being true.**
-
+>BasicWeapon.java said, “The problem is the seven classes that extend it.” That stopped being true when we replaced the combination subclasses with decorators that wrap a Weapon.
 
 ### The limit you will find
 
@@ -35,14 +36,28 @@ enchant shortsword with flaming
 disenchant shortsword
 ```
 
-**What is in your hand now?** ______
+**What is in your hand now?** __frost shortsword____
 
 **Now get to a weapon that is Flaming but not Frost, starting from Flaming(Frost(sword)), using
 only `disenchant`.**
 
 **Write down what happened and why.** *(One sentence. It is the same sentence as US-7.4's,
 pointed the other way.)*
+>I could not get a Flaming-only weapon because disenchant removes only the outermost decorator, so reaching Frost requires removing Flaming first.
 
+### US-7.5 implementation and verification
+
+Implemented `peel()` and the `disenchant` command. Disenchant removes
+only the outermost enchantment, updates the equipped weapon when needed,
+and supports undo through the existing snapshot system.
+
+Removed the unused `unwrap()` method and updated outdated Week 9 comments.
+
+Tests run: 116, Failures: 0, Errors: 0, Skipped: 0.
+
+Six new tests cover basic-weapon peeling, returning the exact wrapped
+weapon, removing only the outermost layer, repeated disenchanting,
+updating the equipped weapon, and undo restoring inventory and equipment.
 
 ---
 
