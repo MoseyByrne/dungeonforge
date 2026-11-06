@@ -58,7 +58,7 @@ public abstract class LevelGenerator {
 
     private RoomPopulator populatorFor(ThemeKit theme, boolean isBossRoom) {
         if (isBossRoom) return new BossRoomPopulator(theme);
-        if (RandomSource.getInstance().nextDouble() < 0.30) {
+        if (rng().nextDouble() < 0.30) {
             return new TreasureRoomPopulator(theme);
         }
         return new StandardRoomPopulator(theme);
@@ -82,6 +82,53 @@ public abstract class LevelGenerator {
         }
 
         rooms.removeIf(room -> !seen.contains(room));
+    }
+
+    // Shared helpers for connecting rooms within a level.
+
+    protected static final String[] DIRECTIONS = {
+            "north", "south", "east", "west"
+    };
+
+    protected static RandomSource rng() {
+        return RandomSource.getInstance();
+    }
+
+    protected static String opposite(String direction) {
+        return switch (direction) {
+            case "north" -> "south";
+            case "south" -> "north";
+            case "east" -> "west";
+            case "west" -> "east";
+            default -> throw new IllegalArgumentException(
+                    "Not a horizontal direction: " + direction);
+        };
+    }
+
+    protected static void connect(Room a, String direction, Room b) {
+        String reverse = opposite(direction);
+        a.link(direction, b);
+        b.link(reverse, a);
+    }
+
+    protected boolean tryConnect(Room a, String direction, Room b) {
+        if (a == b) return false;
+
+        boolean horizontal = false;
+        for (String allowed : DIRECTIONS) {
+            if (allowed.equals(direction)) {
+                horizontal = true;
+                break;
+            }
+        }
+        if (!horizontal) return false;
+
+        String reverse = opposite(direction);
+        if (a.getExits().containsKey(direction)) return false;
+        if (b.getExits().containsKey(reverse)) return false;
+
+        connect(a, direction, b);
+        return true;
     }
 
     // Primitive operation: each shape supplies its own connections.
