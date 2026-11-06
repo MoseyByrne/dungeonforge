@@ -67,7 +67,6 @@ class TemplateMethodTest {
     }
 
     /** A well-written shape wastes nothing, so the invariant finds nothing to prune. */
-
     @Test
     void everyShapeKeepsAllTheRoomsItWasGiven() {
         for (LevelGenerator shape : allShapes()) {
@@ -112,7 +111,66 @@ class TemplateMethodTest {
                 "a step a subclass can call is a step a subclass can call at the wrong time");
         assertFalse(visible.contains("populateRooms"));
         assertFalse(visible.contains("createRooms"));
-    }@Test
+    }
+
+    // ================= US-8.2: primitives versus hooks =================
+
+    @Test
+    void theShapeStepIsAbstractSoItCannotBeForgotten() throws Exception {
+        Method connect = LevelGenerator.class.getDeclaredMethod("connectRooms", DungeonLevel.class);
+        assertTrue(Modifier.isAbstract(connect.getModifiers()));
+    }
+
+    /** A hook has a body, and the body does nothing. That is the whole difference. */
+    @Test
+    void hooksAreConcreteAndOptional() throws Exception {
+        for (String hook : List.of("addShortcuts", "decorate")) {
+            Method m = hook.equals("decorate")
+                    ? LevelGenerator.class.getDeclaredMethod(hook, DungeonLevel.class, ThemeKit.class)
+                    : LevelGenerator.class.getDeclaredMethod(hook, DungeonLevel.class);
+            assertFalse(Modifier.isAbstract(m.getModifiers()), hook + " should be a hook, not a primitive");
+        }
+    }
+
+    /** Only the cave overrides addShortcuts; the other shapes inherit the empty hook. */
+    @Test
+    void onlyOneShapeOverridesAHookAndTheRestInheritTheSilence() {
+        int overriders = 0;
+        for (LevelGenerator shape : allShapes()) {
+            try {
+                shape.getClass().getDeclaredMethod("addShortcuts", DungeonLevel.class);
+                overriders++;
+            } catch (NoSuchMethodException ignored) { }
+        }
+        assertEquals(1, overriders, "only CaveGenerator should want extra edges");
+    }
+
+    /** The cave's hook actually runs, and the extra edges survive the invariant step. */
+    @Test
+    void theCaveHookAddsEdgesBeyondASpanningTree() {
+        int treeEdges = 0, caveEdges = 0;
+        for (int seed = 1; seed <= 8; seed++) {
+            // DIFFERENT seeds, not resetForTests() eight times. The first version of this test
+            // reset to the SAME seed on every pass, so it measured one dungeon eight times and
+            // reported identical totals. A loop that does not vary its input is not a sample.
+            RandomSource.getInstance().reseed(seed * 7919L);
+            treeEdges += countDoors(new CorridorGenerator().generate(1, theme, 8, false));
+            RandomSource.getInstance().reseed(seed * 7919L);
+            caveEdges += countDoors(new CaveGenerator().generate(1, theme, 8, false));
+        }
+        assertTrue(caveEdges > treeEdges,
+                "the cave should be loopier than a corridor; got " + caveEdges + " vs " + treeEdges);
+    }
+
+    private static int countDoors(DungeonLevel level) {
+        int n = 0;
+        for (Room r : level.getRooms()) n += r.getExits().size();
+        return n;
+    }
+
+    // ================= US-8.3: shapes may only spend four directions =================
+
+    @Test
     void noShapeUsesTheDescendingDirectionBecauseTheStairsOwnIt() {
         for (LevelGenerator shape : allShapes()) {
             DungeonLevel level = shape.generate(1, theme, 8, false);
@@ -135,5 +193,4 @@ class TemplateMethodTest {
             }
         }
     }
-
 }
