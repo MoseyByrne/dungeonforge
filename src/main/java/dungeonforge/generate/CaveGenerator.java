@@ -1,6 +1,5 @@
 package dungeonforge.generate;
 
-import dungeonforge.config.RandomSource;
 import dungeonforge.core.DungeonLevel;
 import dungeonforge.core.Room;
 
@@ -11,17 +10,37 @@ public class CaveGenerator extends LevelGenerator {
     @Override
     protected void connectRooms(DungeonLevel level) {
         List<Room> rooms = level.getRooms();
-        String[] directions = {"north", "south"};
 
         for (int r = 1; r < rooms.size(); r++) {
-            int back = RandomSource.getInstance().nextInt(r);
-            String direction = directions[
-                    RandomSource.getInstance().nextInt(directions.length)];
-            String reverse = direction.equals("north") ? "south" : "north";
-
-            rooms.get(back).link(direction, rooms.get(r));
-            rooms.get(r).link(reverse, rooms.get(back));
+            attachToSomeEarlierRoom(rooms, r);
         }
+    }
+
+    private void attachToSomeEarlierRoom(List<Room> rooms, int r) {
+        Room child = rooms.get(r);
+
+        for (int attempt = 0;
+             attempt < r * DIRECTIONS.length * 2;
+             attempt++) {
+
+            Room parent = rooms.get(rng().nextInt(r));
+            String direction = DIRECTIONS[rng().nextInt(DIRECTIONS.length)];
+
+            if (tryConnect(parent, direction, child)) {
+                return;
+            }
+        }
+
+        // Check every remaining possibility if random attempts were unlucky.
+        for (int i = 0; i < r; i++) {
+            for (String direction : DIRECTIONS) {
+                if (tryConnect(rooms.get(i), direction, child)) {
+                    return;
+                }
+            }
+        }
+
+        throw new IllegalStateException("Could not attach room " + r);
     }
 
     @Override
