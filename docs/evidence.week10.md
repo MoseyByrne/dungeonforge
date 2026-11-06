@@ -271,15 +271,19 @@ grep -c 'createRoomFlavor()' src/main/java/dungeonforge/core/GameWorld.java
 grep -c 'populatorFor(' src/main/java/dungeonforge/core/GameWorld.java
 grep -c 'switch (d % ' src/main/java/dungeonforge/core/GameWorld.java
 ```
+>GameWorld.java now has 86 lines, zero room-creation statements,
+zero entrance-flavor calls, zero populatorFor references, and zero
+shape-selection switches. All four levels pass the report's invariants
+with seed 3.
 
 | | Before | After |
 |---|---|---|
-| `GameWorld.java` lines | | |
-| times room creation is written | | |
-| times entrance flavour is written | | |
-| times the populate loop is written | | |
-| `switch` statements over level shape | | |
-| levels satisfying every invariant (seed 3) | | |
+| `GameWorld.java` lines | 269 | |
+| times room creation is written | 3 | |
+| times entrance flavour is written | 3 | |
+| times the populate loop is written | 3 | |
+| `switch` statements over level shape | 1 | |
+| levels satisfying every invariant (seed 3) | 2/4 | |
 
 *(Fill the After column at the end of the sprint. Nothing in it may be a guess.)*
 
