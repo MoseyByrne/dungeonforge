@@ -29,6 +29,8 @@ public abstract class LevelGenerator {
         connectRooms(level);
         markEntrance(level, theme);
         populateRooms(level, theme, depth, isFinalLevel);
+        addShortcuts(level);
+        decorate(level, theme);
         enforceReachability(level);
         return level;
     }
@@ -136,4 +138,12 @@ public abstract class LevelGenerator {
     protected abstract void connectRooms(DungeonLevel level);
 
     public abstract String shapeName();
+
+    // Optional hooks: subclasses may override these.
+
+    protected void addShortcuts(DungeonLevel level) {
+    }
+
+    protected void decorate(DungeonLevel level, ThemeKit theme) {
+    }
 }
