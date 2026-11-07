@@ -277,13 +277,13 @@ shape-selection switches. All four levels pass the report's invariants
 with seed 3.
 
 | | Before | After |
-|---|---|---|
-| `GameWorld.java` lines | 269 | |
-| times room creation is written | 3 | |
-| times entrance flavour is written | 3 | |
-| times the populate loop is written | 3 | |
-| `switch` statements over level shape | 1 | |
-| levels satisfying every invariant (seed 3) | 2/4 | |
+|---|---|-------|
+| `GameWorld.java` lines | 269 | 86    |
+| times room creation is written | 3 | 1     |
+| times entrance flavour is written | 3 | 1     |
+| times the populate loop is written | 3 | 1     |
+| `switch` statements over level shape | 1 | 0     |
+| levels satisfying every invariant (seed 3) | 2/4 | 4/4   |
 
 *(Fill the After column at the end of the sprint. Nothing in it may be a guess.)*
 
@@ -293,31 +293,36 @@ with seed 3.
 
 **Paste `git diff --stat HEAD~1` for the commit that added the fourth shape:**
 
+```bash
+ .../dungeonforge/generate/GeneratorRegistry.java   |  1 +
+ .../java/dungeonforge/generate/SpokeGenerator.java | 37 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 ```
 
-```
+**New files:** ___1___  **Modified files:** ____1__  **Lines added:** ____38__
 
-**New files:** ______  **Modified files:** ______  **Lines added:** ______
-
-**Is `GameWorld.java` in that diff?** ______ **Why not?**
-
+**Is `GameWorld.java` in that diff?** ___no___ **Why not?**
+>Because It already selects generators through GeneratorRegistry, so adding the spoke shape only required a new generator class and one registry entry.
 
 ### The other half of the receipt — what the old design would have cost
 
 **(a)** To add a spoke shape to the starter, which existing method would you have copied?
 *(Be honest — you would copy the one whose shape is closest, not the one that is correct.)*
-
+>buildRingLevel
 ______
 
-**(b)** Roughly how many lines would that have added to `GameWorld.java`? ______
+**(b)** Roughly how many lines would that have added to `GameWorld.java`? __48____
 
 **(c)** **The question that matters.** Look at the method you named in (a). Run the `grep` from
 Part 2 on it. Does it have any of the drift you catalogued?
-
+>Yes. Its population loop started at r = 0 instead of r = 1, so it
+populated the entrance room.
 ______
 
 **So what would have happened to the new level's invariants?**
-
+>The copied spoke builder would also allow monsters to spawn in the
+entrance, breaking the safe-entrance invariant whenever the random
+population placed monsters there.
 
 **(d)** Now check your answer against reality. Your instructor measured it: the fourth shape was
 added to the starter by copying `buildRingLevel`, and on **the default seed** the report went
@@ -327,6 +332,8 @@ from `orphaned rooms: 4, spawn-camped levels: 0` to `orphaned rooms: 4, spawn-ca
 went from 1 to 2, and **it compiled on the first attempt.**
 
 > Write the conclusion as a sentence with the word *propagate* in it.
+> Copying a builder can propagate its bugs into a new shape, even when
+the code compiles successfully.
 
 ---
 
@@ -334,13 +341,17 @@ went from 1 to 2, and **it compiled on the first attempt.**
 
 Your fourth shape produces levels with no orphaned rooms and an empty entrance.
 
-**Find the reachability check in `SpokeGenerator.java`.** Where is it? ______
+**Find the reachability check in `SpokeGenerator.java`.** Where is it? ___enforceReachability()___
 
-**Find the entrance guard in `SpokeGenerator.java`.** Where is it? ______
+**Find the entrance guard in `SpokeGenerator.java`.** Where is it? __populateRooms()____
 
 **In two or three sentences: explain how a class can satisfy an invariant it does not implement,
 and what had to be true of `generate()` for that to work.**
-
+>SpokeGenerator inherits generate(), which calls the shared private
+operations that enforce reachability and skip populating the entrance.
+Making generate() final prevents the subclass from replacing the
+sequence, while making the fixed operations private prevents it from
+overriding those operations.
 
 ---
 
@@ -349,11 +360,12 @@ and what had to be true of `generate()` for that to work.**
 Two of the starter's levels were broken. Both are fixed now.
 
 **Did you write a bug fix? Quote the lines if you did.**
-
+>if (a.getExits().containsKey(direction)) return false;
+if (b.getExits().containsKey(reverse)) return false;
 
 **If you did not, describe what you actually did instead.** *(There is a precise way to say this,
 and it involves the word "deleted".)*
-
+>I deleted the three duplicated builders and moved their shared steps into one final template method, fixing the original drift. Later, I also fixed cave exit overwriting by checking both connection points before linking and retrying when a connection was unavailable.
 
 ---
 
@@ -361,10 +373,14 @@ and it involves the word "deleted".)*
 
 **First, the carry-over.** One sentence on what `disenchant` taught you about Decorator that
 building the decorators did not.
-
+>Disenchant showed me that decorators form an ordered stack: I can remove
+the outermost enchantment, but I cannot remove an inner one while keeping
+the layers above it using peel alone.
 
 
 
 **One sentence on something Template Method gave you, and one on something it took away.** *(It
 does take something. Head First is clear about it on p. 302 — a subclass cannot change the order
 of the steps, and one day you will want to.)*
+>Template Method gave me one shared generation sequence that every shape
+follows. It took away a subclass’s freedom to reorder or skip those steps.
