@@ -71,7 +71,7 @@ most self-contained story here and the sprint still demonstrates State without i
 | US-6.3 | 3 | 3            | about right|
 | US-6.4 | 1 | 1            | about right|
 
-**Points completed:** ____ · **Running velocity:** ____
+**Points completed:** __10__ · **Running velocity:** ____
 
 ## Sprint Review — one sentence
 DungeonForge now uses State objects to manage game modes and monster lifecycles, limits commands to the current mode, and preserves monster state when undoing a turn.
