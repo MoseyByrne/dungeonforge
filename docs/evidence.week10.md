@@ -341,9 +341,9 @@ the code compiles successfully.
 
 Your fourth shape produces levels with no orphaned rooms and an empty entrance.
 
-**Find the reachability check in `SpokeGenerator.java`.** Where is it? ___enforceReachability()___
+**Find the reachability check in `SpokeGenerator.java`.** Where is it? Not in SpokeGenerator.java; it is the private enforceReachability() method in LevelGenerator.java.
 
-**Find the entrance guard in `SpokeGenerator.java`.** Where is it? __populateRooms()____
+**Find the entrance guard in `SpokeGenerator.java`.** Where is it? Not in SpokeGenerator.java; LevelGenerator.populateRooms() starts at r = 1, skipping the entrance.
 
 **In two or three sentences: explain how a class can satisfy an invariant it does not implement,
 and what had to be true of `generate()` for that to work.**

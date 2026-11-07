@@ -13,11 +13,11 @@
 ## Capacity
 
 | Sprint | Committed | Completed |
-|---|---|---|
-| Sprint 3 (Wk 5) | 10 | ____ |
-| Sprint 5 (Wk 7) | 10 | ____ |
-| Sprint 6 (Wk 8) | 12 | ____ |
-| **Sprint 7 (Wk 9)** | **11** | ____ |
+|---|-----------|-----------|
+| Sprint 3 (Wk 5) | 10        | __10__    |
+| Sprint 5 (Wk 7) | 10        | ____10    |
+| Sprint 6 (Wk 8) | 10        | ___10_    |
+| **Sprint 7 (Wk 9)** | **11**    | __11__    |
 
 ## Committed stories
 
@@ -331,14 +331,14 @@ counted.
 ## Calibration
 
 | Story | Estimated | Actual hours | High, low, about right? |
-|---|---|---|---|
-| US-6.7 | 1 | | |
-| US-7.1 | 4 | | |
-| US-7.2 | 3 | | |
-| US-7.3 | 1 | | |
-| US-7.4 | 2 | | |
+|---|---|--------------|---|
+| US-6.7 | 1 | 1            | |
+| US-7.1 | 4 | 2            | |
+| US-7.2 | 3 | 2            | |
+| US-7.3 | 1 | 1            | |
+| US-7.4 | 2 | 2            | |
 
-**Points completed:** ____ · **Running velocity:** ____
+**Points completed:** __11__ · **Running velocity:** ____
 
 ## Sprint Review — one sentence
 
