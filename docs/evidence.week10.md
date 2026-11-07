@@ -277,13 +277,13 @@ shape-selection switches. All four levels pass the report's invariants
 with seed 3.
 
 | | Before | After |
-|---|---|---|
-| `GameWorld.java` lines | 269 | |
-| times room creation is written | 3 | |
-| times entrance flavour is written | 3 | |
-| times the populate loop is written | 3 | |
-| `switch` statements over level shape | 1 | |
-| levels satisfying every invariant (seed 3) | 2/4 | |
+|---|---|-------|
+| `GameWorld.java` lines | 269 | 86    |
+| times room creation is written | 3 | 1     |
+| times entrance flavour is written | 3 | 1     |
+| times the populate loop is written | 3 | 1     |
+| `switch` statements over level shape | 1 | 0     |
+| levels satisfying every invariant (seed 3) | 2/4 | 4/4   |
 
 *(Fill the After column at the end of the sprint. Nothing in it may be a guess.)*
 
