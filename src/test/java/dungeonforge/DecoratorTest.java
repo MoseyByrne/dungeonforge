@@ -302,4 +302,32 @@ class DecoratorTest {
         assertEquals(1, player.getInventory().size());
         assertEquals(15, player.getEquippedWeapon().getDamage());
     }
+    @Test
+    void disenchantingAPlainWeaponIsRefusedAndChangesNothing() {
+        player.addItem(sword());
+        run("equip sword");
+        int armed = player.getAttackPower();
+
+        run("disenchant sword");
+
+        assertEquals(armed, player.getAttackPower());
+        assertEquals("Iron Sword", player.getEquippedWeapon().getName());
+        assertEquals(1, player.getInventory().size(),
+                "a refusal must not duplicate the weapon");
+    }
+
+    @Test
+    void disenchantCommandContainsNoTypeTestForDecorators() throws Exception {
+        String code = java.nio.file.Files.readString(
+                java.nio.file.Path.of(
+                        "src/main/java/dungeonforge/commands/DisenchantCommand.java"));
+
+        code = code.replaceAll("(?s)/\\*.*?\\*/", "")
+                .replaceAll("(?m)//.*$", "");
+
+        assertFalse(code.contains("instanceof WeaponDecorator"),
+                "the command should ask the Weapon to peel itself");
+        assertFalse(code.contains("unwrap"),
+                "peel() replaced unwrap()");
+    }
 }
