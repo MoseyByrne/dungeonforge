@@ -24,12 +24,103 @@ grep -rn 'MONSTER_SATE_CHANGED' src/main/java | wc -l
 
 **Paste the failure.**
 
-```
+```bash
+$ mvn -Dtest=QuietDefectsTest test
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------------< edu.redwoods.cis18:dungeonforge >-------------------
+[INFO] Building DungeonForge 0.12.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- resources:3.4.0:resources (default-resources) @ dungeonforge ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.13.0:compile (default-compile) @ dungeonforge ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 91 source files with javac [debug release 21] to target\classes
+[INFO]
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ dungeonforge ---
+[INFO] skip non existing resourceDirectory C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\src\test\resources
+[INFO]
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ dungeonforge ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 9 source files with javac [debug release 21] to target\test-classes
+[INFO]
+[INFO] --- surefire:3.2.5:test (default-test) @ dungeonforge ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running dungeonforge.QuietDefectsTest
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.047 s <<< FAILURE! -- in dungeonforge.QuietDefectsTest
+[ERROR] dungeonforge.QuietDefectsTest.correctlySpelledMonsterStateEventExists -- Time elapsed: 0.023 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception thrown: java.lang.IllegalArgumentException: No enum constant dungeonforge.events.EventType.MONSTER_STATE_CHANGED
+        at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at org.junit.jupiter.api.AssertDoesNotThrow.createAssertionFailedError(AssertDoesNotThrow.java:84)
+        at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:75)
+        at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:58)
+        at org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3228)
+        at dungeonforge.QuietDefectsTest.correctlySpelledMonsterStateEventExists(QuietDefectsTest.java:18)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+Caused by: java.lang.IllegalArgumentException: No enum constant dungeonforge.events.EventType.MONSTER_STATE_CHANGED
+        at java.base/java.lang.Enum.valueOf(Enum.java:293)
+        at dungeonforge.events.EventType.valueOf(EventType.java:4)
+        at dungeonforge.QuietDefectsTest.lambda$correctlySpelledMonsterStateEventExists$0(QuietDefectsTest.java:19)
+        at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:71)
+        ... 6 more
 
+[ERROR] dungeonforge.QuietDefectsTest.uppercaseEnchantmentIsRecognised -- Time elapsed: 0.006 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+        at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+        at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+        at dungeonforge.QuietDefectsTest.uppercaseEnchantmentIsRecognised(QuietDefectsTest.java:13)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+
+[INFO]
+[INFO] Results:
+[INFO]
+[ERROR] Failures:
+[ERROR]   QuietDefectsTest.correctlySpelledMonsterStateEventExists:18 Unexpected exception thrown: java.lang.IllegalArgumentException: No enum constant dungeonforge.events.EventType.MONSTER_STATE_CHANGED
+[ERROR]   QuietDefectsTest.uppercaseEnchantmentIsRecognised:13 expected: <true> but was: <false>
+[INFO]
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.192 s
+[INFO] Finished at: 2026-11-10T15:58:16-08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project dungeonforge: There are test failures.
+[ERROR]
+[ERROR] Please refer to C:\Users\Administrator\Desktop\CIS 18 Object Oriented Programming\dungeonforge\target\surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
 ```
+>After both fixes:
+Tests run: 142, Failures: 0, Errors: 0, Skipped: 0.
+The misspelled event name has zero matches in src/main/java.
+MONSTER_STATE_CHANGED appears in Combat.java, CombatLog.java,
+and EventType.java.
 
 **One sentence: 137 tests passed and this did not work. What were those 137 tests about?**
-
+>The 137 passing tests checked the behaviors and inputs already covered, but none required uppercase enchantment names to work or the monster-state event name to be spelled correctly.
 
 ---
 
