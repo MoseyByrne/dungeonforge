@@ -319,15 +319,28 @@ python3 scripts/codeonly.py src/main/java/dungeonforge/factory/MonsterFactory.ja
 ```
 
 **Paste all four.**
+Adapter implementation commit: `94cc4dc`
 
+```bash
+$ git -c core.safecrlf=false --no-pager diff --stat HEAD~1 HEAD
+git --no-pager diff HEAD~1 HEAD -- src/main/java/dungeonforge/legacy/LegacyBestiary.java
+git --no-pager diff HEAD~1 HEAD -- src/main/java/dungeonforge/factory/MonsterFactory.java
+python scripts/codeonly.py src/main/java/dungeonforge/factory/MonsterFactory.java | grep -ciE 'bestiary|csv|MOB_ID|HIT_DICE'
+ src/main/java/dungeonforge/Main.java               |   7 +
+ .../java/dungeonforge/factory/MonsterSource.java   |   8 +
+ .../dungeonforge/legacy/LegacyBestiaryAdapter.java | 115 ++++++++++++
+ src/test/java/dungeonforge/AdapterFacadeTest.java  | 201 +++++++++++++++++++++
+ 4 files changed, 331 insertions(+)
+0
 ```
-
-```
+LegacyBestiary.java comparison: no output.
+MonsterFactory.java comparison: no output.
+Full test suite: 156 tests, 0 failures, 0 errors, 0 skipped.
 
 **Two of those commands are the deliverable. Which two, and why?**
+>The two file comparisons are the deliverable because they show that neither LegacyBestiary nor MonsterFactory changed. The adapter lets their incompatible interfaces work together without modifying either class.
 
-
-**`blueprintCount()` before:** ______ **after:** ______
+**`blueprintCount()` before:** __19____ **after:** ___29___
 
 ### US-9.2, the Facade
 
