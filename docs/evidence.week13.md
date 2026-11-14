@@ -12,18 +12,24 @@ commentary.
 
 Open `events/DamageMeter.java` and find where its warning level comes from.
 
-**Paste that line.** ______
+**Paste that line.** ___this.threshold = (int)Math.round(threshold * GameConfig.getInstance().getDouble("playerStartingHp"));___
 
 **`playerStartingHp` is a constant in `config.json`. In one sentence: what is the meter supposed
 to be asking, and who is it asking instead?**
+>The meter should ask the player for its current maximum HP, but instead it asks GameConfig for the starting HP.
 
 
 **Now try to write a test that proves it is wrong.**
 
-**What stops you?** ______
+**What stops you?** ___Entity exposes getMaxHp() but has no public setMaxHp(), so the test cannot change the existing player’s maximum HP through its public API.___
 
 **One sentence: why did this defect survive four sprints?**
+>The defect survived because a fixed starting maximum made the incorrect calculation behave like the correct one, and no test changed that maximum.
 
+>Before the fix: CarryOverTest ran 6 tests with 1 failure.
+damageMeterUsesThePlayersCurrentMaximum expected 1 warning but received 0.
+>After the fix: mvn clean test ran 167 tests with 0 failures,
+0 errors, and 0 skipped, including 8 CarryOverTest tests.
 
 ---
 
@@ -35,14 +41,19 @@ for f in $(find src/main/java -name '*.java'); do
 done
 ```
 
-**List them:** ______
+**List them:** ___src/main/java/dungeonforge/commands/CommandParser.java
+src/main/java/dungeonforge/commands/TakeCommand.java
+src/main/java/dungeonforge/commands/TurnSnapshot.java
+src/main/java/dungeonforge/core/GameWorld.java
+src/main/java/dungeonforge/core/Room.java
+src/main/java/dungeonforge/factory/RoomPopulator.java___
 
-**How many?** ______
+**How many?** ___6___
 
 **Now the sentence. Name the count and say what it is a count OF.** *(Two points. "Six files use
 getChest" is not it — six files know *something*, and naming that thing is the answer.)*
 
-> ____________________________________________________________________
+> Six files know that a room stores items in two separate places: its floor collection and its chest’s contents.
 
 **And one more count:**
 
@@ -50,11 +61,11 @@ getChest" is not it — six files know *something*, and naming that thing is the
 grep -rln "carriedWeight\|totalWeight" src/main/java/
 ```
 
-**Result:** ______
+**Result:** ___0___
 
 **Every `Item` has declared `getWeight()` since Week 1. In one sentence, what does that result
 mean about the number on your status line?**
-
+>The displayed carrying capacity does not tell us the actual combined weight of the items the player carries.
 
 ---
 
@@ -65,25 +76,40 @@ Open `commands/TakeCommand.java`. Put `takeFromFloor()` and `takeFromChest()` si
 **Paste both:**
 
 ```java
+    private Item takeFromFloor() {
+        for (Item i : room().getFloorItems()) {
+            if (matches(i)) { room().getFloorItems().remove(i); return i; }
+        }
+        return null;
+    }
 
+    private Item takeFromChest() {
+        if (!room().hasChest()) return null;
+        for (Item i : room().getChest().getContents()) {
+            if (matches(i)) { room().getChest().getContents().remove(i); return i; }
+        }
+        return null;
+    }
 ```
 
-**Ignoring the collection each one walks, how many lines actually differ?** ______
+**Ignoring the collection each one walks, how many lines actually differ?** ___1___
 
 **Now play the game.** `mvn -q exec:java`, then: go north, kill whatever is there, `look`,
 `take <the chest's name>`.
 
 **Paste those four lines of output:**
 
-```
+```bash
+[Exploring | HP 75/80] > take Iron-bound Chest
 
+  There is nothing like that here.
 ```
 
 **The game listed a chest, let you take something out of it, and then said it does not exist.
 Which of those three statements is false?**
+>“There is nothing like that here” is false: the chest exists, but TakeCommand searches only loose items and the items inside the chest.
 
-
-**Open `items/Chest.java` and read the comment at the top. When was it written?** ______
+**Open `items/Chest.java` and read the comment at the top. When was it written?** ___week 4___
 
 ---
 
@@ -97,14 +123,14 @@ $C src/main/java/dungeonforge/items/Chest.java | grep -c 'implements Item'
 ```
 
 | | Before | After |
-|---|---|---|
-| files that know a room has two containers | | |
-| collections a `Room` keeps items in | | |
-| search methods in `TakeCommand` | | |
-| `Chest` is an `Item` (yes/no) | | |
-| files that sum item weight | | |
-| `take <chest>` works (yes/no) | | |
-| `totalLoot()` after dropping two items | | |
+|---|--------|---|
+| files that know a room has two containers | 6      | |
+| collections a `Room` keeps items in | 2      | |
+| search methods in `TakeCommand` | 2      | |
+| `Chest` is an `Item` (yes/no) | no     | |
+| files that sum item weight | 0      | |
+| `take <chest>` works (yes/no) | no     | |
+| `totalLoot()` after dropping two items |        | |
 
 *(After column at the end of the sprint. **Nothing in it may be a guess.**)*
 

@@ -33,6 +33,11 @@ public abstract class Entity {
      * Clamped, so no snapshot can ever restore an impossible value.
      */
     public void setHp(int hp) { this.hp = Math.max(0, Math.min(hp, maxHp)); }
+    /** Changes the maximum without healing; clamps current HP if necessary. */
+    public void setMaxHp(int newMax) {
+        maxHp = Math.max(1, newMax);
+        hp = Math.min(hp, maxHp);
+    }
 
     public void takeDamage(int amount) { hp = Math.max(0, hp - Math.max(0, amount)); }
     public void heal(int amount)       { hp = Math.min(maxHp, hp + Math.max(0, amount)); }
