@@ -297,8 +297,9 @@ awk '/public static void main/{on=1} on{n++} on&&/^    }$/&&n>3{print n; exit}' 
 | `main()` lines                               | 79                         | 49    |
 | `ctx.syncState()` in `Main`                  | 3                          | 0     |
 | copies of the turn sequence                  | 2                          | 1     |
-| `DamageMeter` mentioned outside its own file | Pending project-wide check |       |
-| listener classes subscribed, of 5            | 3/5                        |       |
+| `DamageMeter` mentioned outside its own file | Pending project-wide check | 1     |
+| listener classes subscribed, of 5            | 3/5                        |   4 of 5: QuestTracker, AchievementSystem, CombatLog, and DamageMeter.
+DangerMeter remains unsubscribed.    |
 | monster blueprints available                 |  Pending count                          | 29    |
 | a script can walk past a live hostile        |    Pending demonstration                        | no    |
 
@@ -373,15 +374,19 @@ The Facade receipt measures the relocation of setup and turn processing into one
 
 ## 5. AFTER — what you did not have to change
 
-**List every file that learned a CSV exists.** ______
+**List every file that learned a CSV exists.**
+>src/main/java/dungeonforge/session/GameSession.java selects bestiary.csv.
+src/main/java/dungeonforge/legacy/LegacyBestiaryAdapter.java knows its
+legacy field names and translates them.
 
-**Is `MonsterFactory` one of them?** ______
+**Is `MonsterFactory` one of them?** ___no___
 
 **`ThemeKit` picks which monsters appear in a room. How many lines of it did you change to make
-ten new monsters appear?** ______
+ten new monsters appear?** ___0___
 
 **In two or three sentences: explain how a class can use a blueprint that arrived from a file
 format it has never heard of.**
+>The adapter translates each legacy record into a MonsterDef before registering it with MonsterFactory. ThemeKit uses the factory’s existing interface, so it can select those blueprints without knowing where they came from.
 
 
 ---
@@ -390,26 +395,27 @@ format it has never heard of.**
 
 ### The Adapter's honest half
 
-**`bestiary.csv` has no xp column. Which of the three options did you take?** ______
+**`bestiary.csv` has no xp column. Which of the three options did you take?** ___Derive a value and document the rule.___
 
-**Where in your code does a reader find out that the number is derived?** ______
+**Where in your code does a reader find out that the number is derived?** ___In LegacyBestiaryAdapter.definitions(), which records the derivation in notes exposed by translationNotes().___
 
 **One sentence: what would have gone wrong if you had silently defaulted it to 5?**
-
+>A silent default would hide missing source information and make an arbitrary reward look like faithfully translated data.
 
 **`SAPPER` has no counterpart. What did you do, and what happens when the eleventh unknown AI
 name arrives next semester?**
-
+>SAPPER falls back to aggressive and produces a translation note saying it has no counterpart. Any new unknown AI name follows that same fallback and warning path until an explicit mapping is added.
 
 ### The Facade's honest half
 
 **Complete this honestly:**
 
 > `GameSession` now knows about eight collaborators and the order they go together in, which
-> means the coupling ______________________________________________
+> means the coupling moved into one assembly point rather than disappearing.
 
 **Name one thing that got HARDER because `Main` no longer knows those eight classes.** *(There
 is a real answer. Think about what a test needs.)*
+>A test that starts a GameSession must construct a whole dungeon even if it only needs a small part of the session.
 
 
 ---
@@ -421,10 +427,11 @@ Four sentences, and the two costs are not the same cost.
 
 | Pattern | Gave | Took |
 |---|---|---|
-| Adapter | | |
-| Facade | | |
+| Adapter | Adapter let me import ten legacy monsters without changing the reader or factory. | It made me responsible for translation rules and documenting information the source could not supply. |
+| Facade | Facade gave scripted and interactive play one shared turn sequence. | It made the session entry point construct the entire subsystem, even when a caller needs only part of it. |
 
 **And the one-sentence distinction, in your own words, having now written both:** Adapter and
 Facade are both "a class in front of other classes." What made them different in practice?
+>Adapter translates an incompatible interface; Facade simplifies access to a subsystem and coordinates its operations.
 
 
