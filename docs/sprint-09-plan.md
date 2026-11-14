@@ -17,13 +17,13 @@
 ## Capacity
 
 | Sprint | Committed | Completed |
-|---|---|---|
-| Sprint 3 (Wk 5) | 10 | ____ |
-| Sprint 5 (Wk 7) | 10 | ____ |
-| Sprint 6 (Wk 8) | 12 | ____ |
-| Sprint 7 (Wk 9) | 11 | ____ |
-| Sprint 8 (Wk 10) | 12 | ____ |
-| **Sprint 9 (Wk 12)** | **10** | ____ |
+|---|---|-----------|
+| Sprint 3 (Wk 5) | 10 | __10__    |
+| Sprint 5 (Wk 7) | 10 | __10__    |
+| Sprint 6 (Wk 8) | 12 | __12__    |
+| Sprint 7 (Wk 9) | 11 | __11__    |
+| Sprint 8 (Wk 10) | 12 | __12__    |
+| **Sprint 9 (Wk 12)** | **10** | __10__    |
 
 **Six sprints, six empty Completed columns.** "Capacity ~10" has been a guess since Week 5 and
 nothing has ever checked it. This sprint commits **exactly** 10 for the first time, which makes
@@ -428,22 +428,26 @@ different games.
 ## Calibration
 
 | Story | Estimated | Actual hours | High, low, about right? |
-|---|---|---|---|
-| **US-8.5** (carry-over) | **1** | | |
-| US-9.1 | 3 | | |
-| US-9.2 | 4 | | |
-| US-9.3 | 2 | | |
+|---|---|--------------|-------------------------|
+| **US-8.5** (carry-over) | **1** | 2            | low                     |
+| US-9.1 | 3 | 3            | ar                      |
+| US-9.2 | 4 | 4            | ar                      |
+| US-9.3 | 2 | 2            | ar                      |
 
-**Points completed:** ____ · **Running velocity:** ____
+**Points completed:** __10__ · **Running velocity:** __11__
 
 **This is the sixth sprint with an empty Completed column.** Fill this one in, and fill in
 Sprint 8's while the commits are still fresh. Three weeks of real numbers beats six months of
 "~10".
 
 ## Sprint Review — one sentence
+>Added 10 legacy monster blueprints without changing either existing class, centralized session setup and turn execution, and verified the result with 164 passing tests.
 
 ## Retro — one thing to keep, one thing to change
+>Keep writing tests that check observable behavior, such as the warning appearing and replay transcripts matching.
+> Check the assembled game earlier instead of assuming that individually working classes are connected correctly.
 
 **And one specific question this week:** Adapter and Facade are both "a class that stands in
 front of other classes." In one sentence each, say what made them different in practice —
 not in the book.
+>The Adapter translated legacy records into the monster definitions our factory already understood. The Facade centralized setup and turn ordering so interactive and scripted play followed the same sequence.
