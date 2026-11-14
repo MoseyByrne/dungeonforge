@@ -22,8 +22,8 @@
 | Sprint 3 (Wk 5) | 10 | __10__    |
 | Sprint 5 (Wk 7) | 10 | __10__    |
 | Sprint 6 (Wk 8) | 12 | __10__    |
-| Sprint 7 (Wk 9) | 11 | __8__     |
-| **Sprint 8 (Wk 10)** | **12** | ___8_     |
+| Sprint 7 (Wk 9) | 11 | __11__    |
+| **Sprint 8 (Wk 10)** | **12** | _12_      |
 
 **Three of those Completed columns are empty, and that is now the problem.** Five sprints in,
 there is no measured velocity to plan against, so "capacity ~10" is still a guess from Week 5.
