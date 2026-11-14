@@ -293,14 +293,14 @@ awk '/public static void main/{on=1} on{n++} on&&/^    }$/&&n>3{print n; exit}' 
 ```
 
 |                                              | Before                     | After |
-|----------------------------------------------|----------------------------|---|
-| `main()` lines                               | 79                         | |
-| `ctx.syncState()` in `Main`                  | 3                          | |
-| copies of the turn sequence                  | 2                          | |
-| `DamageMeter` mentioned outside its own file | Pending project-wide check | |
-| listener classes subscribed, of 5            | 3/5                        | |
-| monster blueprints available                 |  Pending count                          | |
-| a script can walk past a live hostile        |    Pending demonstration                        | |
+|----------------------------------------------|----------------------------|-------|
+| `main()` lines                               | 79                         | 49    |
+| `ctx.syncState()` in `Main`                  | 3                          | 0     |
+| copies of the turn sequence                  | 2                          | 1     |
+| `DamageMeter` mentioned outside its own file | Pending project-wide check |       |
+| listener classes subscribed, of 5            | 3/5                        |       |
+| monster blueprints available                 |  Pending count                          | 29    |
+| a script can walk past a live hostile        |    Pending demonstration                        | no    |
 
 *(Fill the After column at the end of the sprint. **Nothing in it may be a guess.**)*
 
@@ -350,12 +350,23 @@ git diff --stat HEAD~1          # on the us-9.2 commit
 
 **Paste it.**
 
+```bash
+092b8ac (HEAD -> feature/us-9.2-game-session-facade) feat: centralize game setup and turns in GameSession
+ src/main/java/dungeonforge/Main.java               | 176 +++++----------------
+ src/main/java/dungeonforge/core/GameWorld.java     |  10 +-
+ .../java/dungeonforge/session/GameSession.java     | 157 ++++++++++++++++++
+ src/test/java/dungeonforge/AdapterFacadeTest.java  | 103 ++++++++++++
+ 4 files changed, 304 insertions(+), 142 deletions(-)
 ```
-
-```
+>Tests run: 161, Failures: 0, Errors: 0, Skipped: 0.
+The default-seed report satisfies every invariant.
+The script encounters a Barrow Wight in L1R1, enters Combat,
+and refuses the second north command.
 
 **One sentence each on what the two numbers mean.** *(They mean different things. One is about a
 format; one is about an order.)*
+>The Adapter receipt measures the code needed to translate the legacy format while leaving both existing classes unchanged.
+The Facade receipt measures the relocation of setup and turn processing into one place that controls their order.
 
 
 ---

@@ -1,46 +1,19 @@
 package dungeonforge;
 
-import dungeonforge.commands.Command;
-import dungeonforge.commands.CommandHistory;
-import dungeonforge.commands.CommandParser;
-import dungeonforge.commands.GameContext;
 import dungeonforge.config.RandomSource;
-import dungeonforge.core.Combat;
-import dungeonforge.core.GameWorld;
-import dungeonforge.core.Player;
-import dungeonforge.events.AchievementSystem;
+import dungeonforge.core.DungeonReport;
 import dungeonforge.events.CombatLog;
-import dungeonforge.events.EventBus;
 import dungeonforge.events.EventType;
 import dungeonforge.events.GameEvent;
 import dungeonforge.events.GameEventListener;
-import dungeonforge.events.QuestTracker;
-import dungeonforge.items.Hourglass;
-import dungeonforge.items.Potion;
-import dungeonforge.factory.MonsterSource;
-import dungeonforge.legacy.LegacyBestiary;
-import dungeonforge.legacy.LegacyBestiaryAdapter;
+import dungeonforge.session.GameSession;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
-/**
- * WEEK 7 -- the game loop, after COMMAND.
- *
- * Compare gameLoop() below with the Week 6 version. It went from about seventy lines of
- * if/else to four lines, and it no longer knows what any verb means:
- *
- *     Command c = parser.parse(line, ctx);
- *     c.execute();
- *     history.push(c);
- *
- * The loop is now a thing that could drive ANY command set. --script proves it: the same
- * three lines replay a recorded session with no interactive input at all.
- */
 public final class Main {
 
     public static final String VERSION = "0.12.0";
@@ -60,127 +33,51 @@ public final class Main {
         String script = null;
         boolean report = false;
         for (String a : args) {
-            if (a.startsWith("--seed="))        RandomSource.getInstance().reseed(Long.parseLong(a.substring(7).trim()));
-            else if (a.startsWith("--script=")) script = a.substring(9).trim();
-            // WEEK 10 (PROVIDED) -- a bare boolean flag, in the same hand-rolled style as the
-            // two above. Prints the per-level invariant table and exits.
-            else if (a.equals("--report"))      report = true;
-            else if (!a.startsWith("--"))       name = a;
+            if (a.startsWith("--seed=")) {
+                RandomSource.getInstance().reseed(Long.parseLong(a.substring(7).trim()));
+            } else if (a.startsWith("--script=")) {
+                script = a.substring(9).trim();
+            } else if (a.equals("--report")) {
+                report = true;
+            } else if (!a.startsWith("--")) {
+                name = a;
+            }
         }
 
         System.out.println(banner());
-        System.out.println("  version " + VERSION + "   seed " + RandomSource.getInstance().getSeed());
+        System.out.println("  version " + VERSION
+                + "   seed " + RandomSource.getInstance().getSeed());
         System.out.println();
 
-        Player player = new Player(name);
-        player.addItem(new Potion("Small Healing Draught", 0.3, 20, 22));
-        player.addItem(new Hourglass(2));                 // US-5.4
-        // WEEK 9 (PROVIDED) -- a plain weapon to start with, so the enchantment exercises in
-        // docs/evidence.md work on turn one instead of waiting on a loot drop.
-        player.addItem(new dungeonforge.items.BasicWeapon("Notched Shortsword", 2.5, 25, 5));
-        GameWorld world = new GameWorld(player);
-
-        // WEEK 10 -- the diagnostic path. Prints the invariant table and exits before any of
-        // the game's wiring is built, because a diagnostic should need as little of the system
-        // as possible to run.
         if (report) {
-            System.out.println(dungeonforge.core.DungeonReport.of(world));
+            System.out.println(DungeonReport.of(GameSession.buildWorldOnly(name)));
             return;
         }
 
-        // =============================================================================
-        // WEEK 12 -- THE ASSEMBLY BLOCK. Everything from here to the first `look` below is
-        // wiring: five collaborators, four subscriptions, and an order that matters.
-        //
-        // Count the listener classes in events/ before you read on. Then count the
-        // bus.subscribe calls here. US-9.2 is about the difference.
-        //
-        // Nothing enforces that this block is complete, or that it is the same block the
-        // script path gets, because there is only one copy of it and it lives in main().
-        // =============================================================================
-        EventBus bus = new EventBus();
-        QuestTracker quests = new QuestTracker(bus);
-        AchievementSystem achievements = new AchievementSystem(bus);
-        CombatLog log = new CombatLog(200);
-        bus.subscribe(quests);
-        bus.subscribe(achievements);
-        bus.subscribe(log);
-        bus.subscribe(new ConsolePrinter());
-
-        // WEEK 12 (US-9.1) -- YOUR ADAPTER PLUGS IN HERE.
-        //
-        // Register the previous team's bestiary with the factory, through the adapter you
-        // write. One line. You will MOVE that line into GameSession in US-9.2 -- that is
-        // expected, and it is the point: a wiring step that lives in main() has to be
-        // remembered by every caller, and there is about to be more than one caller.
-
-        MonsterSource source = new LegacyBestiaryAdapter(
-                new LegacyBestiary("bestiary.csv"), "0.4 export");
-        source.definitions().forEach(world.getMonsterFactory()::register);
-
-        CommandHistory history = new CommandHistory();
-        GameContext ctx = new GameContext(world, player, bus, new Combat(bus), history);
-        CommandParser parser = new CommandParser(quests, achievements);
-
-        bus.message("Type 'help' for what you can do. You are carrying an hourglass -- 'use hourglass' rewinds a turn.");
-        parser.parse("look", ctx).execute();
-        ctx.syncState();
-
+        GameSession session = GameSession.start(name, new ConsolePrinter());
         if (script != null) {
-            runScript(parser, ctx, history, Files.readAllLines(Path.of(script)));
+            for (String line : Files.readAllLines(Path.of(script))) {
+                if (line.isBlank() || line.startsWith("#")) continue;
+                if (!session.isRunning()) break;
+                System.out.println("\n[script] > " + line);
+                session.runLine(line);
+            }
         } else {
-            gameLoop(parser, ctx, history);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(System.in, StandardCharsets.UTF_8));
+            while (session.isRunning()) {
+                System.out.print(session.prompt());
+                System.out.flush();
+                String line = in.readLine();
+                if (line == null) break;
+                System.out.println();
+                session.runLine(line);
+            }
         }
 
-        System.out.println();
-        System.out.println("  " + player.describe());
-        if (!player.isAlive()) System.out.println("  You die in the dark.");
-        System.out.println("  Actions this session: " + history.replayLog().size()
-                + "   |   undo stack depth: " + history.depth());
+        System.out.println(session.epilogue());
     }
 
-    /** THE ENTIRE GAME LOOP. Four lines of work. */
-    private static void gameLoop(CommandParser parser, GameContext ctx, CommandHistory history) {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-
-        ctx.syncState();
-        while (ctx.isRunning()) {
-            System.out.print("\n["+ctx.getState().name()+" | HP " + ctx.getPlayer().getHp() + "/"
-                    + ctx.getPlayer().getMaxHp() + "] > ");
-            System.out.flush();
-
-            String line;
-            try { line = in.readLine(); } catch (Exception e) { break; }
-            if (line == null) break;
-            System.out.println();
-
-            Command command = parser.parse(line, ctx);   // text  -> object
-            command.execute();                            // object -> effect
-            history.push(command);                        // object -> undo stack + replay log
-            ctx.syncState();
-        }
-    }
-
-    /**
-     * WEEK 7 -- the capability nobody asked for.
-     *
-     * Because actions are objects, a recorded session is just a list of strings, and replaying
-     * it uses the SAME three lines as interactive play. Attach one of these to a bug report
-     * and the bug reproduces exactly -- which only works because Week 3 made the world seeded.
-     */
-    private static void runScript(CommandParser parser, GameContext ctx,
-                                  CommandHistory history, List<String> lines) {
-        for (String line : lines) {
-            if (line.isBlank() || line.startsWith("#")) continue;
-            if (!ctx.isRunning()) break;
-            System.out.println("\n[script] > " + line);
-            Command command = parser.parse(line, ctx);
-            command.execute();
-            history.push(command);
-        }
-    }
-
-    /** The console view. It prints; nothing else does. */
     private static final class ConsolePrinter implements GameEventListener {
         private final CombatLog formatter = new CombatLog(1);
 
@@ -188,11 +85,10 @@ public final class Main {
         public void onEvent(GameEvent event) {
             if (event.getType() == EventType.ROOM_CLEARED) return;
             formatter.onEvent(event);
-            var lines = formatter.getLines();
-            if (!lines.isEmpty()) {
-                System.out.println("  " + lines.get(lines.size() - 1));
-                formatter.clear();          // otherwise an event with no text re-prints the last one
+            for (String line : formatter.getLines()) {
+                System.out.println("  " + line);
             }
+            formatter.clear();
         }
     }
 }
