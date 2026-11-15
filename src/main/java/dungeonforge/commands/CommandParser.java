@@ -178,8 +178,10 @@ public class CommandParser {
     /** WEEK 7 -- assembles a MACRO COMMAND at parse time from whatever is in the room. */
     private static Command makeLootMacro(GameContext ctx) {
         Room room = ctx.getCurrentRoom();
-        List<Item> targets = new ArrayList<>(room.getFloorItems());
-        if (room.hasChest()) targets.addAll(room.getChest().getContents());
+        List<Item> targets = new ArrayList<>();
+        for (Item item : room.asContents()) {
+            targets.add(item);
+        }
 
         if (targets.isEmpty()) {
             return new NoCommand(ctx.getBus(), "There is nothing here to loot.");

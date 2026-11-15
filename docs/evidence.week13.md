@@ -134,6 +134,17 @@ $C src/main/java/dungeonforge/items/Chest.java | grep -c 'implements Item'
 
 *(After column at the end of the sprint. **Nothing in it may be a guess.**)*
 
+>US-10.1 verification:
+mvn clean test — 176 tests, 0 failures, 0 errors, 0 skipped.
+IteratorCompositeTest — 9 tests passed.
+>
+>The code-only chest-accessor search now lists four files:
+CommandParser.java, TurnSnapshot.java, Room.java, and RoomPopulator.java.
+>
+>TakeCommand contains one room().contents() call and no takeFromFloor
+or takeFromChest helpers. The countingLootNoLongerForgetsTheFloor test
+confirms that adding two loose items increases totalLoot() by two.
+
 ---
 
 ## 4. The gap US-10.2 leaves on purpose
@@ -173,9 +184,8 @@ sentence: what were they actually asserting?**
 
 ### The bug nobody reported
 
-**Read the version of `totalLoot()` you started the week with. What did it count?** ______
-
-**What did it NOT count?** ______
+**Read the version of `totalLoot()` you started the week with. What did it count? What did it NOT count?**
+>it counted chest contents only, ignoring loose floor items.
 
 **Why was that invisible?** ______
 
