@@ -210,7 +210,8 @@ class CommandTest {
         ctx.setCurrentRoom(room);
         room.getMonsters().clear();
 
-        int expected = room.getChest().getContents().size() + room.getFloorItems().size();
+        // Loot takes top-level objects; contents travel inside their chest.
+        int expected = room.getFloorItems().size();
         run("loot");
         assertEquals(expected, player.getInventory().size());
 
@@ -290,7 +291,10 @@ class CommandTest {
     private Room findRoomWithLoot() {
         for (var level : ctx.getWorld().getLevels()) {
             for (Room r : level.getRooms()) {
-                if (r.getChest() != null && r.getChest().getContents().size() >= 2) return r;
+                // Find a room with a sufficiently stocked top-level chest.
+                for (dungeonforge.items.Chest chest : r.getChests()) {
+                    if (chest.directCount() >= 2) return r;
+                }
             }
         }
         return null;

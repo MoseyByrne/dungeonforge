@@ -189,31 +189,119 @@ mvn test
 
 **Paste all three.**
 
-```
+```bash
+$ ls src/main/java/dungeonforge/core/RoomContentsIterator.java
+ls: cannot access 'src/main/java/dungeonforge/core/RoomContentsIterator.java': No such file or directory
 
+$ grep -rl 'RoomContentsIterator' src/
+# No output.
+
+$ mvn test
+[INFO] Tests run: 194, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
 ```
 
 **US-10.1's tests were written against a class that no longer exists, and they still pass. In one
 sentence: what were they actually asserting?**
+>The behavioral tests asserted traversal and removal through Room’s public API rather than a particular iterator class; assertions tied to the old storage structure were updated because the new traversal also returns containers.
 
+**US-10.3 gameplay verification.**
+```bash
+[Exploring | HP 75/80] > look
+
+  [L1R1] Level 1: Crypt
+  "Damp stone. Something drips in the dark, patiently."
+  Iron-bound Chest:
+    - Vial of Still Water [heals 21] (0.4kg, 25g)
+    - Vampiric Bone Shortsword [dmg 6] [drain 1] (2.0kg, 140g
+    - Grave Shroud [def 3] (3.0kg, 43g)
+  Exits: south, north
+
+[Exploring | HP 75/80] > status
+
+  Delver  HP 75/80  ATK 10  DEF 3  Gold 28  XP 14  Carry 3.3/60.0kg  (unarmed)
+
+[Exploring | HP 75/80] > take Iron-bound Chest
+
+  You take Iron-bound Chest.
+
+[Exploring | HP 75/80] > inventory
+
+  You are carrying:
+    - Small Healing Draught [heals 22] (0.3kg, 20g)
+    - Chronomancer's Hourglass [2 charges] (rewinds one turn)
+    - Notched Shortsword [dmg 5] (2.5kg, 25g)
+    - Iron-bound Chest (10.4kg, 208g)
+
+[Exploring | HP 75/80] > status
+
+  Delver  HP 75/80  ATK 10  DEF 3  Gold 28  XP 14  Carry 13.7/60.0kg  (unarmed)
+
+[Exploring | HP 75/80] > look
+
+  [L1R1] Level 1: Crypt
+  "Damp stone. Something drips in the dark, patiently."
+  Exits: south, north
+
+[Exploring | HP 75/80] > undo
+
+  You take that back.
+
+[Exploring | HP 75/80] > look
+
+  [L1R1] Level 1: Crypt
+  "Damp stone. Something drips in the dark, patiently."
+  Iron-bound Chest:
+    - Vial of Still Water [heals 21] (0.4kg, 25g)
+    - Vampiric Bone Shortsword [dmg 6] [drain 1] (2.0kg, 140g
+    - Grave Shroud [def 3] (3.0kg, 43g)
+  Exits: south, north
+
+[Exploring | HP 75/80] > inventory
+
+  You are carrying:
+    - Small Healing Draught [heals 22] (0.3kg, 20g)
+    - Chronomancer's Hourglass [2 charges] (rewinds one turn)
+    - Notched Shortsword [dmg 5] (2.5kg, 25g)
+
+[Exploring | HP 75/80] > status
+
+  Delver  HP 75/80  ATK 10  DEF 3  Gold 28  XP 14  Carry 3.3/60.0kg  (unarmed)
+```
+
+| Measurement | Before pickup | After pickup | After undo |
+|---|---:|---:|---:|
+| Carried weight | 3.3 kg | 13.7 kg | 3.3 kg |
+| Chest in room | Yes | No | Yes |
+| Chest in inventory | No | Yes | No |
 
 ### The bug nobody reported
 
 **Read the version of `totalLoot()` you started the week with. What did it count? What did it NOT count?**
 >it counted chest contents only, ignoring loose floor items.
 
-**Why was that invisible?** ______
+**Why was that invisible?** ___Generated loot was placed inside chests, so counting only chest contents appeared correct until loose items were added to a floor.___
 
 **Paste your before-and-after measurement** — `totalLoot()` with nothing on the floor, then after
 dropping two items.
 
+```bash
+$ mvn -Dtest=IteratorCompositeTest#countingLootNoLongerForgetsTheFloor test
+
+totalLoot before adding two floor items: 35
+totalLoot after adding two floor items: 37
+
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
 ```
 
-```
+The test adds two loose items directly to the starting room's floor,
+simulating the floor contents after dropping them rather than executing
+the drop command. totalLoot() increases from 35 to 37, counting both items.
 
 **One sentence, and be careful with it: did Iterator FIND this bug?** *(There is a wrong answer
 that sounds good.)*
-
+>No. Inspecting the old implementation and testing loose floor items exposed the bug; using one iterator-based traversal fixed the omission.
 
 ---
 

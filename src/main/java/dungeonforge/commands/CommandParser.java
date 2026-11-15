@@ -7,6 +7,7 @@ import dungeonforge.events.AchievementSystem;
 import dungeonforge.events.Quest;
 import dungeonforge.events.QuestTracker;
 import dungeonforge.items.Item;
+import dungeonforge.items.Chest;
 import dungeonforge.states.GameOverState;
 
 import java.util.ArrayList;
@@ -178,7 +179,8 @@ public class CommandParser {
     /** WEEK 7 -- assembles a MACRO COMMAND at parse time from whatever is in the room. */
     private static Command makeLootMacro(GameContext ctx) {
         Room room = ctx.getCurrentRoom();
-        List<Item> targets = new ArrayList<>();
+        // Loot takes top-level objects; a chest brings its contents with it.
+        List<Item> targets = new ArrayList<>(room.getFloorItems());
         for (Item item : room.asContents()) {
             targets.add(item);
         }
@@ -206,10 +208,18 @@ public class CommandParser {
                 if (m.isAlive()) b.append(" ").append(m.describe());
             }
         }
-        for (Item i : room.getFloorItems()) b.append("\n  On the floor: ").append(i.describe());
-        if (room.hasChest()) {
-            b.append("\n  ").append(room.getChest().getName()).append(":");
-            for (Item i : room.getChest().getContents()) b.append("\n    - ").append(i.describe());
+        for (Item item : room.getFloorItems()) {
+            if (item instanceof Chest chest) {
+                b.append("\n  ").append(chest.getName()).append(":");
+                if (chest.isEmpty()) {
+                    b.append(" (empty)");
+                }
+                for (Item child : chest.getContents()) {
+                    b.append("\n    - ").append(child.describe());
+                }
+            } else {
+                b.append("\n  On the floor: ").append(item.describe());
+            }
         }
         b.append("\n  Exits: ").append(String.join(", ", room.getExits().keySet()));
         return b.toString();
