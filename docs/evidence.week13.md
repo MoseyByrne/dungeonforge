@@ -151,14 +151,29 @@ confirms that adding two loose items increases totalLoot() by two.
 
 Finish US-10.2, then play the game again and try `take <the chest's name>`.
 
-**What happened?** ______
+**What happened?**
+```bash
+[Exploring | HP 75/80] > look
+
+  [L1R1] Level 1: Crypt
+  "Damp stone. Something drips in the dark, patiently."
+  Iron-bound Chest:
+    - Vial of Still Water [heals 21] (0.4kg, 25g)
+    - Vampiric Bone Shortsword [dmg 6] [drain 1] (2.0kg, 140g
+    - Grave Shroud [def 3] (3.0kg, 43g)
+  Exits: south, north
+
+[Exploring | HP 75/80] > take Iron-bound Chest
+
+  There is nothing like that here.
+```
 
 **Complete this sentence:**
 
-> A chest is an `Item` now and I still cannot pick one up, because ______________________________
+> A chest is an `Item` now and I still cannot pick one up, because the current room iterator visits floor items and chest contents but never returns the chest itself.
 
 
-**Which story owns that, and which of its acceptance criteria?** ______
+**Which story owns that, and which of its acceptance criteria?** ___US-10.3, AC4.___
 
 ---
 
