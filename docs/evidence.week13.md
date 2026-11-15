@@ -122,15 +122,15 @@ $C src/main/java/dungeonforge/commands/TakeCommand.java | grep -cE 'private Item
 $C src/main/java/dungeonforge/items/Chest.java | grep -c 'implements Item'
 ```
 
-| | Before | After |
-|---|--------|---|
-| files that know a room has two containers | 6      | |
-| collections a `Room` keeps items in | 2      | |
-| search methods in `TakeCommand` | 2      | |
-| `Chest` is an `Item` (yes/no) | no     | |
-| files that sum item weight | 0      | |
-| `take <chest>` works (yes/no) | no     | |
-| `totalLoot()` after dropping two items |        | |
+| Measurement | Before | After |
+|---|---|---|
+| Files using the separate chest accessors | 6 | 0 |
+| Collections a `Room` keeps items in | 2 | 1 |
+| Separate `takeFrom…` search helpers in `TakeCommand` | 2 | 0; one iterator search remains |
+| `Chest` is an `Item` | No | Yes |
+| Files that sum item weight | 0 | 2: `Player.java` and `Chest.java` |
+| `take <chest>` works | No | Yes |
+| `totalLoot()` after adding two loose floor items | Not measured on the original build | 35 → 37 on the finished build |
 
 *(After column at the end of the sprint. **Nothing in it may be a guess.**)*
 
@@ -173,7 +173,7 @@ Finish US-10.2, then play the game again and try `take <the chest's name>`.
 > A chest is an `Item` now and I still cannot pick one up, because the current room iterator visits floor items and chest contents but never returns the chest itself.
 
 
-**Which story owns that, and which of its acceptance criteria?** ___US-10.3, AC4.___
+**Which story owns that, and which of its acceptance criteria?** ___US-10.3, AC7 covers taking the chest; AC4 supplies the removal behavior it depends on.___
 
 ---
 
@@ -311,18 +311,18 @@ that sounds good.)*
 
 **Name them, and for each one say why `Room.contents()` could not serve it:**
 
-| File | Why not |
+| File | Why `Room.contents()` alone could not serve it |
 |---|---|
-| | |
-| | |
-| | |
+| `src/main/java/dungeonforge/commands/CommandParser.java` | Room descriptions need to preserve the distinction between loose items and items inside a chest. |
+| `src/main/java/dungeonforge/commands/TurnSnapshot.java` | Undo needs original membership and ownership, which a flat traversal alone does not record. |
+| `src/main/java/dungeonforge/factory/RoomPopulator.java` | It must insert a chest into the room; traversal does not provide insertion. |
 
 **One of those three still reads the room's collections directly in your finished code. Which,
 and is that a failure to finish the refactor? Answer yes or no and defend it.**
-
+>CommandParser does, and that is intentional: loot targets top-level items, while room descriptions preserve container grouping. TurnSnapshot also retains a shallow copy of the floor collection because restoring room membership requires it.
 
 **For the other two: what fixed them — a better iterator, or something else?**
-
+>Composite changed the storage model: RoomPopulator now adds a chest like any other item, and TurnSnapshot records each chest’s contents by identity while retaining the floor membership snapshot. The recursive iterator helps discover nested containers, but traversal alone does not supply restoration semantics.
 
 ---
 
@@ -332,39 +332,39 @@ and is that a failure to finish the refactor? Answer yes or no and defend it.**
 
 **Head First puts `add()` on the Component and lets leaves throw (p. 364). You did not.**
 
-**Name one thing a caller cannot write because of that choice.** ______
+**Name one thing a caller cannot write because of that choice.** ___item.add(thing) when item is declared as Item.___
 
-**Name one thing that cannot go wrong at run time because of it.** ______
+**Name one thing that cannot go wrong at run time because of it.** ___Calling add() on a potion through Item cannot unexpectedly throw at runtime, because that call does not compile.___
 
 **Which would you choose for a library used by strangers? Is that the same answer you gave for
 this codebase?**
-
+>I would keep add() off Item and expose it through a separate container interface, so callers cannot accidentally try to put something inside a potion. Yes, that is the same safety choice made for this codebase
 
 ### The two walks
 
-| | walks | means |
+| Command | Walks | Means |
 |---|---|---|
-| `take <name>` | | |
-| `loot` | | |
+| `take <name>` | The complete tree, parent before children | Find a matching container or an item inside one. |
+| `loot` | Top-level room items | Pick up each loose item or container, bringing its contents along. |
 
 **One sentence: what goes wrong if `loot` walks the tree?**
-
+>If loot walks the tree, it queues containers and their contents separately, causing later requests to fail after the container has already left the room.
 
 ### Leaves
 
-**How many Leaf classes did you change this week?** ______
+**How many Leaf classes did you change this week?** ___0___
 
 **One sentence on what that number says about the pattern.**
-
+>Existing leaf classes continued to work through Item while containers supplied the new aggregate behavior.
 
 ### Retro line
 
 | Pattern | Gave | Took |
 |---|---|---|
-| Iterator | | |
-| Composite | | |
+| Iterator | One traversal interface independent of storage details | Explicit location information; removal must preserve the necessary ownership internally |
+| Composite | Uniform weight and value operations for individual items and nested containers | Simplicity in mutation and undo, which must now respect a tree |
 
 **And: the composite walk yields a container before its contents. Name the player-facing bug
 that comes back if you reverse it.**
-
+>Visiting children first changes first-match behavior: an unnamed or ambiguous take can select a child before its container. An exact chest-name search would still eventually find the chest, so reversing traversal alone does not necessarily recreate the original “chest does not exist” failure.
 
