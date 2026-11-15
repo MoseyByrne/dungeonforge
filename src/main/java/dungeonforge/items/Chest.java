@@ -63,4 +63,8 @@ public class Chest implements Item {
     public int totalValue() {
         return getValue();
     }
+
+    public int directCount() {
+        return contents.size();
+    }
 }

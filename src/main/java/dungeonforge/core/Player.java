@@ -103,6 +103,19 @@ public class Player extends Entity {
         return GameConfig.getInstance().getDouble("carryCapacity");
     }
 
+    /** Each top-level item already includes the weight of its contents. */
+    public double carriedWeight() {
+        double total = 0.0;
+        for (Item item : inventory) {
+            total += item.getWeight();
+        }
+        return total;
+    }
+
+    public boolean canCarry(Item item) {
+        return carriedWeight() + item.getWeight() <= carryCapacity();
+    }
+
     @Override
     public String describe() {
         // WEEK 9 (PROVIDED) -- getAttackPower(), not the raw field. Reading the field here was
@@ -111,7 +124,8 @@ public class Player extends Entity {
         return name + "  HP " + hp + "/" + maxHp
                 + "  ATK " + getAttackPower() + "  DEF " + defense
                 + "  Gold " + gold + "  XP " + xp
-                + "  Carry " + carryCapacity() + "kg"
+                + "  Carry " + String.format(
+                "%.1f/%.1fkg", carriedWeight(), carryCapacity())
                 + (equippedWeapon == null ? "  (unarmed)" : "  wielding " + equippedWeapon.describe());
     }
 }

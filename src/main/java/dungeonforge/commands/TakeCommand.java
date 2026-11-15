@@ -19,6 +19,13 @@ public class TakeCommand extends AbstractCommand {
         while (it.hasNext()) {
             Item item = it.next();
             if (matches(item)) {
+                if (!player().canCarry(item)) {
+                    bus().message(String.format(
+                            "You cannot carry %s (%.1fkg). Carrying %.1f/%.1fkg.",
+                            item.getName(), item.getWeight(),
+                            player().carriedWeight(), player().carryCapacity()));
+                    return false;
+                }
                 it.remove();
                 player().addItem(item);
                 bus().publish(GameEvent.message(

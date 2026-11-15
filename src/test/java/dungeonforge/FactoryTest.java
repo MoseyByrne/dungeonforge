@@ -147,7 +147,8 @@ public class FactoryTest {
         Room room = new Room("Test");
         standard.populate(room, 1);
 
-        assertFalse(room.hasChest());
+        // A standard room receives no chest among its floor items.
+        assertTrue(room.getChests().isEmpty());
         assertFalse(room.getFlavor().isBlank(), "populate() must always set flavor text");
     }
 
@@ -157,8 +158,9 @@ public class FactoryTest {
         Room room = new Room("Test");
         treasure.populate(room, 2);
 
-        assertTrue(room.hasChest());
-        assertTrue(room.getChest().getContents().size() >= 2);
+        // A treasure room receives one stocked chest as a floor item.
+        assertEquals(1, room.getChests().size());
+        assertTrue(room.getChests().get(0).directCount() >= 2);
         assertEquals(1, room.getMonsters().size(), "a treasure room has exactly one guard.");
     }
 

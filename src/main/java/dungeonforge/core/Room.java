@@ -18,7 +18,7 @@ public class Room {
     private String flavor;
     private final List<Monster> monsters = new ArrayList<>();
     private final List<Item> floorItems = new ArrayList<>();
-    private Chest chest;
+
     /** WEEK 7 (provided): where you can walk from here. Week 10's generators make this a real graph. */
     private final Map<String, Room> exits = new LinkedHashMap<>();
 
@@ -34,19 +34,26 @@ public class Room {
     public void addMonster(Monster m)   { monsters.add(m); }
     public List<Item> getFloorItems()   { return floorItems; }
     public void addItem(Item i)         { floorItems.add(i); }
-    public Chest getChest()             { return chest; }
-    public void setChest(Chest c)       { this.chest = c; }
-    public boolean hasChest()           { return chest != null && !chest.isEmpty(); }
 
     /** Returns a fresh iterator over floor items and chest contents. */
     public Iterator<Item> contents() {
-        return new RoomContentsIterator(
-                floorItems, chest == null ? null : chest.getContents());
+        return new CompositeIterator(floorItems.iterator());
     }
 
     /** Allows callers to use an enhanced for loop. */
     public Iterable<Item> asContents() {
         return this::contents;
+    }
+
+    /** Returns top-level chests stored on the floor. */
+    public List<Chest> getChests() {
+        List<Chest> chests = new ArrayList<>();
+        for (Item item : floorItems) {
+            if (item instanceof Chest chest) {
+                chests.add(chest);
+            }
+        }
+        return chests;
     }
 
     public Map<String, Room> getExits()      { return exits; }
