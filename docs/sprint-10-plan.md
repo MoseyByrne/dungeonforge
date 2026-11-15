@@ -18,12 +18,12 @@
 ## Capacity
 
 | Sprint | Committed | Completed |
-|---|---|---|
-| Sprint 6 (Wk 8) | 12 | ____ |
-| Sprint 7 (Wk 9) | 11 | ____ |
-| Sprint 8 (Wk 10) | 12 | ____ |
-| Sprint 9 (Wk 12) | 10 | ____ |
-| **Sprint 10 (Wk 13)** | **10** | ____ |
+|---|---|-----------|
+| Sprint 6 (Wk 8) | 12 | __10__    |
+| Sprint 7 (Wk 9) | 11 | __11__    |
+| Sprint 8 (Wk 10) | 12 | __12__    |
+| Sprint 9 (Wk 12) | 10 | __10__    |
+| **Sprint 10 (Wk 13)** | **10** | __10__    |
 
 **Seven sprints, seven empty Completed columns.** There are three sprints left after this one.
 Part E asks for actual hours per story, and if Sprint 9's row is still blank, fill it in from
@@ -449,20 +449,23 @@ there and never meant anything.
 ## Calibration
 
 | Story | Estimated | Actual hours | High, low, about right? |
-|---|---|---|---|
-| **US-9.4** (carry-over) | **1** | | |
-| US-10.1 | 3 | | |
-| US-10.2 | 2 | | |
-| US-10.3 | 4 | | |
+|---|---|--------------|-------------------------|
+| **US-9.4** (carry-over) | **1** | 1            | right                   |
+| US-10.1 | 3 | 1.5          | High                    |
+| US-10.2 | 2 | 2            | right                   |
+| US-10.3 | 4 | 4            | right                   |
 
-**Points completed:** ____ · **Running velocity:** ____
+**Points completed:** __10__ · **Running velocity:** __10.75 points per sprint, averaging Sprints 7–10: (11 + 12 + 10 + 10) / 4.__
 
 **Seventh sprint with an empty Completed column, and three sprints left to use the number on.**
 
 ## Sprint Review — one sentence
+Chests now behave as nested items that can be traversed, picked up, weighed, and restored by undo, with 194 passing tests and a damage warning based on the player’s current maximum HP.
 
 ## Retro — one thing to keep, one thing to change
+Keep the deliberate break-and-restore experiments because they expose what the tests actually protect. Add checks for unnecessary output when a command can reach the correct final state while still reporting failures.
 
 **And one specific question this week:** US-10.1's tests passed unmodified after US-10.3 threw
 away the class they were written against. In one sentence, what does that tell you about what a
 test should assert?
+>A test should assert the public behavior callers need, allowing the implementation to change while preserving that contract; tests tied to deliberately removed APIs need explicit updates.
