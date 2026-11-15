@@ -6,6 +6,7 @@ import dungeonforge.factory.ThemeKit;
 import dungeonforge.factory.ThemeRegistry;
 import dungeonforge.generate.GeneratorRegistry;
 import dungeonforge.generate.LevelGenerator;
+import dungeonforge.items.Item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,12 +82,14 @@ public class GameWorld {
     }
 
     public int totalLoot() {
-        int n = 0;
-        for (DungeonLevel l : levels) {
-            for (Room r : l.getRooms()) {
-                if (r.hasChest()) n += r.getChest().getContents().size();
+        int count = 0;
+        for (DungeonLevel level : levels) {
+            for (Room room : level.getRooms()) {
+                for (Item item : room.asContents()) {
+                    count++;
+                }
             }
         }
-        return n;
+        return count;
     }
 }

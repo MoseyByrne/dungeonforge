@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 import dungeonforge.items.Chest;
 import dungeonforge.items.Item;
 
@@ -36,6 +37,17 @@ public class Room {
     public Chest getChest()             { return chest; }
     public void setChest(Chest c)       { this.chest = c; }
     public boolean hasChest()           { return chest != null && !chest.isEmpty(); }
+
+    /** Returns a fresh iterator over floor items and chest contents. */
+    public Iterator<Item> contents() {
+        return new RoomContentsIterator(
+                floorItems, chest == null ? null : chest.getContents());
+    }
+
+    /** Allows callers to use an enhanced for loop. */
+    public Iterable<Item> asContents() {
+        return this::contents;
+    }
 
     public Map<String, Room> getExits()      { return exits; }
     public Room getExit(String direction)    { return exits.get(direction.toLowerCase()); }

@@ -3,43 +3,41 @@ package dungeonforge.commands;
 import dungeonforge.events.GameEvent;
 import dungeonforge.items.Item;
 
-/** WEEK 7 -- COMMAND. Picks an item off the floor or out of a chest. */
+import java.util.Iterator;
+
+/** Picks up an item using the room's contents iterator. */
 public class TakeCommand extends AbstractCommand {
 
-    public TakeCommand(GameContext ctx, String itemName) { super(ctx, itemName); }
+    public TakeCommand(GameContext ctx, String itemName) {
+        super(ctx, itemName);
+    }
 
     @Override
     protected boolean doExecute() {
-        Item found = takeFromFloor();
-        if (found == null) found = takeFromChest();
+        Iterator<Item> it = room().contents();
 
-        if (found == null) {
-            bus().message("There is nothing like that here.");
-            return false;
+        while (it.hasNext()) {
+            Item item = it.next();
+            if (matches(item)) {
+                it.remove();
+                player().addItem(item);
+                bus().publish(GameEvent.message(
+                        "You take " + item.getName() + "."));
+                return true;
+            }
         }
-        player().addItem(found);
-        bus().publish(GameEvent.message("You take " + found.getName() + "."));
-        return true;
+
+        bus().message("There is nothing like that here.");
+        return false;
     }
 
-    private Item takeFromFloor() {
-        for (Item i : room().getFloorItems()) {
-            if (matches(i)) { room().getFloorItems().remove(i); return i; }
-        }
-        return null;
+    private boolean matches(Item item) {
+        return args.isBlank()
+                || item.getName().toLowerCase().contains(args.toLowerCase());
     }
 
-    private Item takeFromChest() {
-        if (!room().hasChest()) return null;
-        for (Item i : room().getChest().getContents()) {
-            if (matches(i)) { room().getChest().getContents().remove(i); return i; }
-        }
-        return null;
+    @Override
+    public String getDescription() {
+        return ("take " + args).trim();
     }
-
-    private boolean matches(Item i) {
-        return args.isBlank() || i.getName().toLowerCase().contains(args.toLowerCase());
-    }
-
-    @Override public String getDescription() { return ("take " + args).trim(); }
 }
